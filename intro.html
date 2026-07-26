@@ -23,6 +23,17 @@
             </nav>
         </header>
 
+        <!-- АУДИОПЛЕЕР ДЛЯ ОЗВУЧКИ -->
+        <div class="audio-player">
+            <audio id="introAudio" preload="metadata">
+                <source src="audio/intro.m4a" type="audio/mp4">
+                <source src="audio/intro.mp3" type="audio/mpeg">
+                <p>Ваш браузер не поддерживает аудио.</p>
+            </audio>
+            <button id="playBtn" class="play-btn">▶ Воспроизвести озвучку</button>
+            <span class="audio-status" id="audioStatus">(не играет)</span>
+        </div>
+
         <main>
             <p>Я много чего пережил за всю жизнь, она наполнена разными моментами, хорошими и не очень. И в какой-то момент, я решил записать всё, что было. От начала до конца. Не для того, чтобы кто-то прочитал. Просто чтобы разложить по полкам. Чтобы понять, где я свернул не туда. Где я мог бы изменить что-то. Чтобы найти ту самую строчку, после которой всё покатилось вниз.</p>
 
@@ -38,5 +49,41 @@
         </footer>
     </div>
     <script src="script.js"></script>
+    <script>
+        // Управление аудиоплеером
+        (function() {
+            const audio = document.getElementById('introAudio');
+            const playBtn = document.getElementById('playBtn');
+            const status = document.getElementById('audioStatus');
+
+            if (!audio || !playBtn || !status) return;
+
+            playBtn.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play().catch(e => {
+                        console.warn('Автовоспроизведение заблокировано:', e);
+                        status.textContent = '(ошибка воспроизведения)';
+                    });
+                    playBtn.textContent = '⏸ Пауза';
+                    status.textContent = '(играет)';
+                } else {
+                    audio.pause();
+                    playBtn.textContent = '▶ Воспроизвести озвучку';
+                    status.textContent = '(приостановлено)';
+                }
+            });
+
+            audio.addEventListener('ended', function() {
+                playBtn.textContent = '▶ Воспроизвести озвучку';
+                status.textContent = '(завершено)';
+            });
+
+            audio.addEventListener('error', function() {
+                status.textContent = '(файл не найден)';
+                playBtn.disabled = true;
+                playBtn.style.opacity = '0.5';
+            });
+        })();
+    </script>
 </body>
 </html>
