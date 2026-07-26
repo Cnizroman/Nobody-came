@@ -1002,3 +1002,58 @@ body.theme-book3 .side-right {
         text-align: center;
     }
 }
+/* ================================================================
+   ЦВЕТА ПЛЕЕРА ДЛЯ КАЖДОЙ КНИГИ
+   ================================================================ */
+
+body.theme-intro .audio-player {
+    border-color: var(--accent-intro);
+    background: rgba(200, 169, 110, 0.06);
+}
+body.theme-intro .play-btn {
+    border-color: var(--accent-intro);
+    color: var(--accent-intro);
+}
+body.theme-intro .play-btn:hover {
+    background: rgba(200, 169, 110, 0.25);
+    box-shadow: 0 0 20px var(--accent-intro);
+}
+
+body.theme-book1 .audio-player {
+    border-color: var(--accent-book1);
+    background: rgba(107, 184, 212, 0.06);
+}
+body.theme-book1 .play-btn {
+    border-color: var(--accent-book1);
+    color: var(--accent-book1);
+}
+body.theme-book1 .play-btn:hover {
+    background: rgba(107, 184, 212, 0.25);
+    box-shadow: 0 0 20px var(--accent-book1);
+}
+
+body.theme-book2 .audio-player {
+    border-color: var(--accent-book2);
+    background: rgba(176, 176, 176, 0.06);
+}
+body.theme-book2 .play-btn {
+    border-color: var(--accent-book2);
+    color: var(--accent-book2);
+}
+body.theme-book2 .play-btn:hover {
+    background: rgba(176, 176, 176, 0.25);
+    box-shadow: 0 0 20px var(--accent-book2);
+}
+
+body.theme-book3 .audio-player {
+    border-color: var(--accent-book3);
+    background: rgba(166, 123, 196, 0.06);
+}
+body.theme-book3 .play-btn {
+    border-color: var(--accent-book3);
+    color: var(--accent-book3);
+}
+body.theme-book3 .play-btn:hover {
+    background: rgba(166, 123, 196, 0.25);
+    box-shadow: 0 0 20px var(--accent-book3);
+}
