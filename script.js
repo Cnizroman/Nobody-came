@@ -346,3 +346,47 @@ setTimeout(() => {
 }, 1000);
 
 console.log('📖 Трилогия загружена. Приятного чтения.');
+// ============================================================
+//  УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ДЛЯ АУДИОПЛЕЕРОВ
+// ============================================================
+function initAudioPlayer(audioId, btnId, statusId) {
+    const audio = document.getElementById(audioId);
+    const btn = document.getElementById(btnId);
+    const status = document.getElementById(statusId);
+
+    if (!audio || !btn || !status) return;
+
+    btn.addEventListener('click', function() {
+        if (audio.paused) {
+            audio.play().catch(e => {
+                status.textContent = '(ошибка воспроизведения)';
+                console.warn('Audio error:', e);
+            });
+            btn.textContent = '⏸ Пауза';
+            status.textContent = '(играет)';
+        } else {
+            audio.pause();
+            btn.textContent = '▶ Воспроизвести озвучку';
+            status.textContent = '(приостановлено)';
+        }
+    });
+
+    audio.addEventListener('ended', function() {
+        btn.textContent = '▶ Воспроизвести озвучку';
+        status.textContent = '(завершено)';
+    });
+
+    audio.addEventListener('error', function() {
+        status.textContent = '(файл не найден)';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+    });
+}
+
+// Инициализация всех плееров при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    initAudioPlayer('introAudio', 'playBtnIntro', 'audioStatusIntro');
+    initAudioPlayer('book1Audio', 'playBtnBook1', 'audioStatusBook1');
+    initAudioPlayer('book2Audio', 'playBtnBook2', 'audioStatusBook2');
+    initAudioPlayer('book3Audio', 'playBtnBook3', 'audioStatusBook3');
+});
