@@ -949,8 +949,9 @@ body.theme-book3 .side-right {
     #toolbar-toggle { bottom: 80px; right: 20px; width: 42px; height: 42px; font-size: 1.25rem; }
     #toolbar-panel { bottom: 130px; right: 20px; padding: 12px 16px; min-width: 150px; }
 }
+
 /* ================================================================
-   АУДИОПЛЕЕР ДЛЯ ИНТРО
+   АУДИОПЛЕЕР
    ================================================================ */
 .audio-player {
     display: flex;
@@ -1002,10 +1003,10 @@ body.theme-book3 .side-right {
         text-align: center;
     }
 }
+
 /* ================================================================
    ЦВЕТА ПЛЕЕРА ДЛЯ КАЖДОЙ КНИГИ
    ================================================================ */
-
 body.theme-intro .audio-player {
     border-color: var(--accent-intro);
     background: rgba(200, 169, 110, 0.06);
