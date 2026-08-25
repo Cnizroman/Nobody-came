@@ -54,6 +54,91 @@
     b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
   }
 
+  const SAFE_KEY = 'nobody-safe-mode';
+
+  // В безопасном режиме нецензурные слова заменяются не символами,
+  // а естественными по смыслу словами/фразами.
+  const safeReplacements = [
+    [/заебал/giu, 'достал'], [/заебалась/giu, 'устала'], [/заебался/giu, 'устал'], [/заебало/giu, 'достало'],
+    [/заебись/giu, 'отлично'],
+    [/пиздец/giu, 'кошмар'], [/пизд[её]ж/giu, 'бред'], [/пиздеть/giu, 'врать'], [/пиздят/giu, 'врут'], [/пиздит/giu, 'врёт'], [/пиздишь/giu, 'врёшь'], [/пиздить/giu, 'врать'], [/пиздюлей/giu, 'наказания'], [/пиздецкий/giu, 'жуткий'], [/пиздато/giu, 'отлично'],
+    [/мразь/giu, 'мерзкий человек'], [/мраза/giu, 'мерзавца'],
+    [/мудацк(?:ий|ая|ое|ие)/giu, m => ({'мудацкий':'дурацкий','мудацкая':'дурацкая','мудацкое':'дурацкое','мудацкие':'дурацкие'}[m.toLowerCase()]||'дурацкий')],
+    [/мудак/giu, 'дурак'], [/мудачка/giu, 'дура'], [/мудило/giu, 'дурак'],
+    [/похуй/giu, 'всё равно'], [/нахуй/giu, 'зачем'], [/нахрен/giu, 'зачем'],
+    [/хуйня/giu, 'ерунда'], [/хуйн(?:я|ю|ей|е|и)/giu, 'ерундой'], [/хуй/giu, 'чёрт'], [/хуя/giu, 'ничего'], [/хуем/giu, 'ничем'], [/хуле/giu, 'зачем'],
+    [/блядь/giu, 'чёрт'], [/бля/giu, 'чёрт'], [/блядский/giu, 'проклятый'], [/сука/giu, 'чёрт'], [/сучка/giu, 'мерзавка'],
+    [/ебан(?:ая|ая|ый|ое|ые|ная|ный|ное|ные)/giu, 'проклятый'], [/ебануться/giu, 'с ума сойти'], [/ебнуться/giu, 'с ума сойти'],
+    [/ебать/giu, 'чёрт'], [/еб[её]т/giu, 'волнует'], [/ебу/giu, 'достаю'], [/еб[её]шь/giu, 'достаёшь'], [/ебись/giu, 'отстань'], [/ебал/giu, 'достал'], [/ебала/giu, 'достала'], [/ебало/giu, 'достало'],
+    [/говно/giu, 'грязь'], [/говняный/giu, 'отвратительный'], [/дерьмо/giu, 'ерунда'], [/дроч\p{L}*/giu, 'баловство']
+  ];
+
+
+
+  function isSafeMode(){
+    // Безопасный режим включён по умолчанию при первом посещении.
+    const saved=localStorage.getItem(SAFE_KEY);
+    if(saved===null){ localStorage.setItem(SAFE_KEY,'1'); return true; }
+    return saved==='1';
+  }
+
+  function replaceProfanityInText(text){
+    for(const [re,replacement] of safeReplacements){
+      re.lastIndex=0;
+      text=text.replace(re,replacement);
+    }
+    // Несколько фраз лучше звучат целиком, чем при пословной замене.
+    text=text.replace(/достал\s+этот\s+бред/gi, 'надоел этот бред');
+    text=text.replace(/я\s+сам\s+себе\s+достаю\s+мозг/gi, 'я сам себя мучаю');
+    return text;
+  }
+
+  function maskTextNode(node){
+    if(!node.nodeValue || !node.nodeValue.trim()) return;
+    node.nodeValue=replaceProfanityInText(node.nodeValue);
+  }
+
+
+  function applySafeMode(){
+    document.body.classList.toggle('safe-mode', isSafeMode());
+    if(!isSafeMode()) return;
+    const walker=document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        const p=node.parentElement;
+        if(!p || ['SCRIPT','STYLE','INPUT','TEXTAREA'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes=[]; let n;
+    while((n=walker.nextNode())) nodes.push(n);
+    nodes.forEach(maskTextNode);
+  }
+
+  function setupSettings(){
+    const wrap=document.createElement('div');
+    wrap.className='site-settings';
+    wrap.innerHTML=`
+      <button class="site-settings-toggle" aria-label="Настройки" title="Настройки">⚙</button>
+      <div class="site-settings-panel" aria-hidden="true">
+        <div class="site-settings-title">Настройки</div>
+        <label class="safe-toggle"><span><strong>Безопасный режим</strong><small>Скрывает нецензурную лексику</small></span><input type="checkbox" id="safeModeToggle"><i></i></label>
+      </div>`;
+    document.body.appendChild(wrap);
+    const panel=wrap.querySelector('.site-settings-panel');
+    const toggle=wrap.querySelector('.site-settings-toggle');
+    const checkbox=wrap.querySelector('#safeModeToggle');
+    checkbox.checked=isSafeMode();
+    toggle.addEventListener('click',()=>{
+      wrap.classList.toggle('open');
+      panel.setAttribute('aria-hidden',String(!wrap.classList.contains('open')));
+    });
+    checkbox.addEventListener('change',()=>{
+      localStorage.setItem(SAFE_KEY, checkbox.checked?'1':'0');
+      location.reload();
+    });
+    applySafeMode();
+  }
+
   function setupTools(){
     const wrap=document.createElement('div');
     wrap.className='reader-tools';
@@ -237,6 +322,20 @@
   }
 
   function setupHome(){
+    // Secret entrance: type the code word directly on the main screen.
+    let secretBuffer='';
+    const secretWord='конец';
+    window.addEventListener('keydown',e=>{
+      if(e.ctrlKey||e.altKey||e.metaKey) return;
+      const ch=(e.key||'').toLowerCase();
+      if(ch.length!==1 || !/[а-яё]/i.test(ch)) return;
+      secretBuffer=(secretBuffer+ch).slice(-secretWord.length);
+      if(secretBuffer===secretWord){
+        document.body.classList.add('void-transition');
+        setTimeout(()=>{ location.href='secret.html'; },1550);
+      }
+    });
+
     const btn=$('#continueBtn');
     const last=localStorage.getItem(lastKey);
     if(btn && last && last!=='index.html'){
@@ -247,11 +346,12 @@
     document.querySelectorAll('[data-progress-for]').forEach(line=>{
       const key=line.dataset.progressFor.replace('.html','');
       const p=Number(localStorage.getItem(`nobody-progress-${key}`)||0);
-      line.style.width=`${Math.round(p)}%`;
+      line.style.setProperty('--progress',`${Math.round(p)}%`);
     });
   }
 
   function init(){
+    setupSettings();
     if(!isReader){
       setupHome();
       return;
@@ -274,6 +374,3 @@
     init();
   }
 })();
-/* silent hidden easter egg — handwritten/glitched descent */
-(()=>{const x=[118,111,105,100,119,104,105,115,112,101,114],k=String.fromCharCode(...x);let s="",q,locked=false;addEventListener("keydown",e=>{if(locked||e.ctrlKey||e.altKey||e.metaKey||e.key.length!==1)return;s=(s+e.key.toLowerCase()).slice(-k.length);if(s===k){locked=true;s="";const v=document.createElement("div");v.className="void-descent";v.innerHTML='<div class="void-descent-noise"></div><div class="void-descent-glow"></div><div class="void-descent-vignette"></div><div class="void-descent-word"><span class="void-main"></span><span class="void-glitch void-g1"></span><span class="void-glitch void-g2"></span><span class="void-glitch void-g3"></span></div>';document.body.appendChild(v);document.documentElement.classList.add("void-descending");requestAnimationFrame(()=>requestAnimationFrame(()=>{v.classList.add("active");const target="THE VOID",main=v.querySelector(".void-main");let i=0;const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\\\|<>_";const type=()=>{if(i>=target.length)return;i++;main.textContent=target.slice(0,i);if(i<target.length)setTimeout(type,85+Math.random()*115);else v.classList.add("written")};setTimeout(type,1150)}));setTimeout(()=>location.replace("secret.html"),7600)}clearTimeout(q);q=setTimeout(()=>s="",5000)},{passive:true})})();
-
