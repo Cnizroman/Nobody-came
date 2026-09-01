@@ -6,151 +6,31 @@
     <title>Там, где нас нет · Трилогия</title>
     <link rel="stylesheet" href="style.css" />
     <style>
-        .password-box .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 14px;
-            font-size: 18px;
-            color: #888;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s ease, transform 0.2s ease;
-            font-family: 'Georgia', serif;
-            line-height: 1;
-            padding: 4px 8px;
-        }
-        .password-box .close-btn:hover {
-            color: #e0e0e0;
-            transform: scale(1.1);
-        }
-        .password-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at 30% 20%, #1a1a1a, #080808 60%, #030303);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            backdrop-filter: blur(6px);
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        .password-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .password-box {
-            background: rgba(12, 12, 12, 0.9);
-            padding: 40px 50px;
-            border-radius: 24px;
-            border: 1px solid rgba(166, 123, 196, 0.3);
-            box-shadow: 0 0 60px rgba(166, 123, 196, 0.15), 0 20px 60px rgba(0, 0, 0, 0.8);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-        }
+        /* Финальное оформление окна пароля третьей книги */
         .password-box .close-btn {
             position: absolute;
             top: 12px;
             right: 16px;
-            font-size: 24px;
-            color: #888;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s ease, transform 0.2s ease;
-            font-family: 'Georgia', serif;
-            line-height: 1;
         }
-        .password-box .close-btn:hover {
-            color: #e0e0e0;
-            transform: scale(1.1);
-        }
-        .password-box h2 {
+        .password-mark {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(var(--accent-rgb), .45);
+            color: var(--accent);
             font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: #a67bc4;
-            margin-bottom: 8px;
-            letter-spacing: 2px;
+            font-size: 19px;
+            letter-spacing: 4px;
+            box-shadow: 0 0 25px rgba(var(--accent-rgb), .08), inset 0 0 20px rgba(var(--accent-rgb), .04);
+            opacity: .9;
         }
         .password-box .sub {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 25px;
-            font-style: italic;
-        }
-        .password-box input {
-            width: 100%;
-            padding: 12px 18px;
-            font-size: 18px;
-            font-family: 'EB Garamond', serif;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(166, 123, 196, 0.2);
-            border-radius: 12px;
-            color: #eae2da;
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 16px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-        .password-box input:focus {
-            border-color: #a67bc4;
-            box-shadow: 0 0 20px rgba(166, 123, 196, 0.15);
-        }
-        .password-box .error {
-            color: #e06060;
-            font-size: 14px;
-            min-height: 24px;
-            margin-bottom: 10px;
-            font-style: italic;
-        }
-        .password-box button {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            font-family: 'Playfair Display', serif;
-            background: #a67bc4;
-            color: #0a0a0a;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
-        .password-box button:hover {
-            background: #b88ad4;
-            box-shadow: 0 0 30px rgba(166, 123, 196, 0.3);
-        }
-        .password-box .hint {
-            margin-top: 16px;
-            font-size: 12px;
-            color: #555;
-            letter-spacing: 1px;
-        }
-        .shake {
-            animation: shake 0.4s ease;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-10px); }
-            40% { transform: translateX(10px); }
-            60% { transform: translateX(-6px); }
-            80% { transform: translateX(6px); }
-        }
-        #book-content {
-            display: none;
-        }
-        #book-content.visible {
-            display: block;
-            animation: fadeIn 0.7s ease;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -160,13 +40,13 @@
 
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-box" id="passwordBox">
-            <button class="close-btn" id="closePasswordBtn">✕</button>
-            <h2>🔐 Там, где нас нет</h2>
-            <p class="sub">Введите пароль, чтобы открыть третью книгу</p>
-            <input type="password" id="passwordInput" placeholder="Пароль" autofocus />
+            <button class="close-btn" id="closePasswordBtn" aria-label="Закрыть">✕</button>
+            <div class="password-mark" aria-hidden="true">III</div>
+            <h2>Там, где нас нет</h2>
+            <p class="sub">Введите слово, чтобы открыть третью книгу</p>
+            <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="off" autofocus />
             <div class="error" id="errorMsg"></div>
             <button id="unlockBtn">Открыть</button>
-            <p class="hint">Подсказка: слово из песни Oxxxymiron</p>
         </div>
     </div>
 
