@@ -32,7 +32,28 @@
             margin-left: auto;
             margin-right: auto;
         }
-    </style>
+    
+        /* Финальное голосовое сообщение */
+        .final-voice { margin:28px auto 34px; max-width:680px; padding:18px 20px 16px; border:1px solid rgba(166,123,196,.18); border-radius:18px; background:linear-gradient(135deg,rgba(22,18,27,.88),rgba(10,9,13,.94)); box-shadow:0 18px 45px rgba(0,0,0,.28),inset 0 0 30px rgba(166,123,196,.025); }
+        .final-voice-head { display:flex; align-items:center; gap:12px; margin-bottom:15px; }
+        .final-voice-icon { width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(166,123,196,.34);color:#a67bc4;font-size:11px;box-shadow:0 0 18px rgba(166,123,196,.08); }
+        .final-voice-title { color:#cfc7d7;font:15px/1.2 'Playfair Display',serif;letter-spacing:.03em; }
+        .final-voice-meta { margin-top:3px;color:#625b69;font:11px/1.3 'EB Garamond',serif;letter-spacing:.04em; }
+        .final-voice-player { display:flex;align-items:center;gap:13px; }
+        .final-voice-play { flex:0 0 38px;width:38px;height:38px;border-radius:50%;padding:0;border:1px solid rgba(166,123,196,.34);background:rgba(166,123,196,.08);color:#b694d0;font-size:13px;cursor:pointer;transition:.25s ease; }
+        .final-voice-play:hover { background:rgba(166,123,196,.15);box-shadow:0 0 20px rgba(166,123,196,.12);transform:scale(1.04); }
+        .final-voice-track-wrap { flex:1;min-width:0; }
+        .final-voice-wave { height:31px;display:flex;align-items:center;gap:3px;cursor:pointer; }
+        .final-voice-wave i { display:block;flex:1;max-width:4px;min-width:2px;height:var(--h,13px);border-radius:3px;background:rgba(166,123,196,.34);transition:background .15s ease; }
+        .final-voice-wave i:nth-child(3n){--h:21px}.final-voice-wave i:nth-child(4n){--h:10px}.final-voice-wave i:nth-child(5n){--h:25px}.final-voice-wave i:nth-child(7n){--h:17px}.final-voice-wave i:nth-child(8n){--h:8px}.final-voice-wave i:nth-child(11n){--h:22px}.final-voice-wave i:nth-child(13n){--h:14px}.final-voice-wave i:nth-child(17n){--h:27px}.final-voice-wave i:nth-child(19n){--h:11px}
+        .final-voice-wave i.active { background:#a67bc4; }
+        .final-voice-time { display:flex;justify-content:space-between;color:#55505b;font:11px/1 'EB Garamond',serif;margin-top:2px; }
+        .final-voice-audio { display:none; }
+        .final-voice-status { margin-top:11px;color:#514a58;font:italic 12px/1.4 'EB Garamond',serif; }
+        .message-unfinished { max-height:0;overflow:hidden;opacity:0;margin:0 auto;text-align:center;color:#6c6274;font:italic 14px/1.5 'EB Garamond',serif;letter-spacing:.03em;transition:max-height 1.2s ease,opacity 1.2s ease,margin .9s ease; }
+        .message-unfinished.visible { max-height:80px;opacity:1;margin:24px auto 40px; }
+        @media(max-width:600px){.final-voice{padding:16px 15px;border-radius:15px}.final-voice-title{font-size:14px}.final-voice-wave{gap:2px}.final-voice-wave i{max-width:3px}.final-voice-status{font-size:11px}}
+</style>
 </head>
 <body class="theme-book3">
     <div class="side-left"><span class="side-title">Там, где нас нет</span></div>
@@ -227,8 +248,31 @@
                     </div>
 
                     <p>
-                        На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и к сожалению я вынужден это сделать. Это моя последняя запись. <span class="highlight">До встречи на небесах... *выстрел*</span>
+                         На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и я понимаю, что больше не могу подобрать слов. Поэтому я просто записал последнее голосовое.
                     </p>
+
+                    <div class="final-voice" data-final-voice>
+                        <div class="final-voice-head">
+                            <span class="final-voice-icon">◉</span>
+                            <div>
+                                <div class="final-voice-title">Голосовое сообщение</div>
+                                <div class="final-voice-meta">избранное · последнее сообщение</div>
+                            </div>
+                        </div>
+                        <div class="final-voice-player">
+                            <button class="final-voice-play" type="button" aria-label="Воспроизвести последнее голосовое">▶</button>
+                            <div class="final-voice-track-wrap">
+                                <div class="final-voice-wave" aria-hidden="true">
+                                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                                </div>
+                                <div class="final-voice-time"><span class="final-voice-current">0:00</span><span class="final-voice-duration">1:00</span></div>
+                            </div>
+                        </div>
+                        <audio class="final-voice-audio" src="audio/final.mp3" preload="metadata"></audio>
+                        <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
+                    </div>
+
+                    <div class="message-unfinished" data-message-unfinished>Сообщение не закончено.</div>
 
                     <hr class="divider" />
 
@@ -425,8 +469,33 @@
                     </div>
 
                     <p>
-                        На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и к сожалению я вынужден это сделать. Это моя последняя запись. <span class="highlight">До встречи на небесах... *выстрел*</span>
+                         На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и я понимаю, что больше не могу подобрать слов. Поэтому я решил записать голосовое, я делал так раньше, это помогает многое обдумать, и услышать самого себя.
                     </p>
+
+                    <div class="final-voice" data-final-voice>
+                        <div class="final-voice-head">
+                            <span class="final-voice-icon">◉</span>
+                            <div>
+                                <div class="final-voice-title">Голосовое сообщение</div>
+                                <div class="final-voice-meta">Избранное</div>
+                            </div>
+                        </div>
+                        <div class="final-voice-player">
+                            <button class="final-voice-play" type="button" aria-label="Воспроизвести последнее голосовое">▶</button>
+                            <div class="final-voice-track-wrap">
+                                <div class="final-voice-wave" aria-hidden="true">
+                                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                                </div>
+                                <div class="final-voice-time"><span class="final-voice-current">0:00</span><span class="final-voice-duration">0:00</span></div>
+                            </div>
+                        </div>
+                        <audio class="final-voice-audio" preload="metadata">
+                            <source src="audio/final.mp3" type="audio/mpeg">
+                        </audio>
+                        <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
+                    </div>
+
+                    <div class="message-unfinished" data-message-unfinished>Сообщение не закончено.</div>
 
                     <hr class="divider" />
 
@@ -482,6 +551,7 @@
                 }
                 o.classList.add('hidden');
                 c.classList.add('visible');
+                initFinalVoice(c);
                 e.textContent = '';
                 i.value = '';
             }
@@ -516,6 +586,37 @@
             x.addEventListener('click', () => window.location.href = 'index.html');
             i.focus();
         })();
+
+        // ============================================================
+        //  ФИНАЛЬНОЕ ГОЛОСОВОЕ
+        // ============================================================
+        function initFinalVoice(root) {
+            const scope = root || document;
+            const box = scope.querySelector ? scope.querySelector('[data-final-voice]') : null;
+            if (!box || box.dataset.ready === '1') return;
+            box.dataset.ready = '1';
+            const audio = box.querySelector('.final-voice-audio');
+            const play = box.querySelector('.final-voice-play');
+            const status = box.querySelector('.final-voice-status');
+            const current = box.querySelector('.final-voice-current');
+            const duration = box.querySelector('.final-voice-duration');
+            const bars = [...box.querySelectorAll('.final-voice-wave i')];
+            const unfinished = scope.querySelector('[data-message-unfinished]');
+            const fmt = sec => { if (!Number.isFinite(sec)) return '0:00'; sec=Math.max(0,Math.floor(sec)); return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); };
+            const paint = () => { const ratio=audio.duration?audio.currentTime/audio.duration:0; bars.forEach((bar,idx)=>bar.classList.toggle('active',idx/bars.length<ratio)); current.textContent=fmt(audio.currentTime); };
+            play.addEventListener('click',()=>{
+                if(audio.paused){ audio.play().then(()=>{play.textContent='❚❚';play.setAttribute('aria-label','Поставить голосовое на паузу');status.textContent='идёт воспроизведение';}).catch(()=>{status.textContent='не удалось воспроизвести аудио';}); }
+                else audio.pause();
+            });
+            audio.addEventListener('loadedmetadata',()=>duration.textContent=fmt(audio.duration));
+            audio.addEventListener('timeupdate',paint);
+            audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Продолжить голосовое');status.textContent='приостановлено';}});
+            audio.addEventListener('ended',()=>{play.textContent='↻';play.setAttribute('aria-label','Прослушать голосовое ещё раз');status.textContent='сообщение завершено';paint();if(unfinished) requestAnimationFrame(()=>unfinished.classList.add('visible'));});
+            bars.forEach((bar,idx)=>bar.addEventListener('click',()=>{if(audio.duration){audio.currentTime=audio.duration*(idx/bars.length);paint();}}));
+            audio.addEventListener('error',()=>status.textContent='не удалось загрузить audio/final.mp3');
+        }
+
+        initFinalVoice(document);
 
         // ============================================================
         //  МЕРЦАЮЩИЕ ЗВЁЗДЫ
