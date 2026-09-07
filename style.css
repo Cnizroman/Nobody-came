@@ -349,6 +349,8 @@ h4{
 .theme-book1{--accent:#73b9d4;--accent-rgb:115,185,212}
 .theme-book2{--accent:#b8b8b8;--accent-rgb:184,184,184}
 .theme-book3{--accent:#a67bc4;--accent-rgb:166,123,196}
+.theme-book4{--accent:#6fffd6;--accent-rgb:111,255,214}
+.theme-book4{background:radial-gradient(circle at 50% -15%,rgba(70,190,160,.12),transparent 44%),radial-gradient(circle at 100% 100%,rgba(30,120,100,.07),transparent 38%),#050908}
 
 .theme-book1{
   background:
