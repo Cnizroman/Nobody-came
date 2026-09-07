@@ -429,6 +429,15 @@ h4{
   border-color:rgba(111,255,214,.18);
   background:rgba(3,12,10,.95);
 }
+
+/* Individual settings icons */
+.theme-book1 .site-settings-toggle{border-color:rgba(115,185,212,.3);color:#8bd3eb}
+.theme-book1 .site-settings-toggle:hover{border-color:rgba(115,185,212,.65);color:#d9f7ff}
+.theme-book2 .site-settings-toggle{border-color:rgba(184,184,184,.3);color:#c9c9c9}
+.theme-book2 .site-settings-toggle:hover{border-color:rgba(220,220,220,.65);color:#fff}
+.theme-book3 .site-settings-toggle{border-color:rgba(166,123,196,.32);color:#b88ddd}
+.theme-book3 .site-settings-toggle:hover{border-color:rgba(196,151,229,.65);color:#eadcff}
+
 .theme-book4 .site-settings-toggle{
   border-color:rgba(111,255,214,.25);
   color:#7de4ca;
@@ -485,6 +494,39 @@ h4{
   clip-path:polygon(47% 0,53% 0,88% 100%,12% 100%);
   filter:blur(.2px);
 }
+
+/* Memories from the previous books: the quoted words themselves are the framed fragment. */
+.theme-book4 .memory-fragment{
+  position:relative;
+  display:block;
+  margin:28px 0 34px;
+  padding:18px 20px;
+  border-radius:2px;
+  font-family:'EB Garamond',serif;
+  font-size:1.02em;
+  line-height:1.65;
+  letter-spacing:.01em;
+  box-shadow:inset 0 0 28px rgba(0,0,0,.16),0 12px 35px rgba(0,0,0,.18);
+}
+.theme-book4 .memory-fragment.book1-fragment{
+  border:1px solid rgba(115,185,212,.42);
+  border-left:2px solid #73b9d4;
+  background:linear-gradient(135deg,rgba(115,185,212,.12),rgba(115,185,212,.025));
+  color:#d9f2fa;
+}
+.theme-book4 .memory-fragment.book2-fragment{
+  border:1px solid rgba(184,184,184,.38);
+  border-left:2px solid #b8b8b8;
+  background:linear-gradient(135deg,rgba(184,184,184,.11),rgba(184,184,184,.025));
+  color:#e8e8e8;
+}
+.theme-book4 .memory-fragment.book3-fragment{
+  border:1px solid rgba(166,123,196,.44);
+  border-left:2px solid #a67bc4;
+  background:linear-gradient(135deg,rgba(166,123,196,.12),rgba(166,123,196,.025));
+  color:#f0e4f8;
+}
+
 
 /* Book 4 ghost smoke — mint/teal spectral palette inspired by Garcello's Release ghost form */
 .ghost-smoke{
@@ -729,8 +771,10 @@ body.home-v2::after{
    GLOBAL SETTINGS + SAFE MODE
    ========================================================= */
 .site-settings{position:fixed;right:22px;bottom:22px;z-index:1200;font-family:'EB Garamond',serif}
-.site-settings-toggle{width:44px;height:44px;border-radius:50%;border:1px solid rgba(166,123,196,.28);background:rgba(8,8,12,.82);backdrop-filter:blur(10px);color:#aaa0b8;font-size:20px;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.28);transition:.3s}
-.site-settings-toggle:hover{transform:rotate(35deg);color:#d4c1e5;border-color:rgba(166,123,196,.55)}
+.site-settings-toggle{width:44px;height:44px;border-radius:50%;border:1px solid rgba(166,123,196,.28);background:rgba(8,8,12,.82);backdrop-filter:blur(10px);color:#aaa0b8;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.28);transition:.3s;display:grid;place-items:center;padding:0}
+.site-settings-toggle svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round;transition:.35s}
+.site-settings-toggle:hover{transform:translateY(-1px);color:#d4c1e5;border-color:rgba(166,123,196,.55)}
+.site-settings-toggle:hover svg{transform:rotate(18deg) scale(1.06)}
 .site-settings-panel{position:absolute;right:0;bottom:56px;width:255px;padding:16px;background:rgba(10,9,14,.96);border:1px solid rgba(166,123,196,.22);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(8px);transition:.25s}
 .site-settings.open .site-settings-panel{opacity:1;visibility:visible;transform:none}
 .site-settings-title{font-family:'Playfair Display',serif;color:#d8cce0;font-size:17px;margin-bottom:13px}
@@ -806,3 +850,98 @@ body.home-v2 .site-settings{bottom:22px}
 @media(max-width:850px){body.home-v2 .home-shell{width:min(900px,calc(100% - 30px));padding-top:5vh}.story-grid{grid-template-columns:1fr}.limbo-card{grid-column:auto}.home-hero h1{font-size:clamp(54px,14vw,92px)}}
 @media(max-width:560px){body.home-v2 .home-shell{width:calc(100% - 24px)}.home-hero{padding-top:12px}.home-lead{font-size:17px}.home-actions{flex-direction:column}.home-primary,.home-secondary{width:100%}.story-card{min-height:165px;padding:20px;grid-template-columns:32px 1fr 22px}.story-card h2{font-size:25px}.home-footer{flex-direction:column;gap:7px}}
 .story-progress{width:var(--progress,0%);right:auto;background:var(--card-accent,#c8a96e)}
+
+/* =========================================================
+   BOOK 4 — restored cinematic dialogue + memory fragments
+   ========================================================= */
+.theme-book4 .dialog{
+  position:relative;
+  margin:30px 0 38px;
+  padding:18px 22px 19px 25px;
+  border:1px solid rgba(111,255,214,.18);
+  border-left:2px solid #6fffd6;
+  border-radius:2px;
+  background:linear-gradient(135deg,rgba(111,255,214,.075),rgba(111,255,214,.018));
+  box-shadow:inset 0 0 42px rgba(111,255,214,.018),0 18px 55px rgba(0,0,0,.32);
+  overflow:hidden;
+}
+.theme-book4 .dialog::before{
+  content:'DIALOGUE';
+  position:absolute;right:16px;top:9px;
+  color:rgba(111,255,214,.22);
+  font:600 8px/1 'EB Garamond',serif;
+  letter-spacing:.28em;
+}
+.theme-book4 .dialog::after{
+  content:'';position:absolute;left:0;top:0;width:78px;height:1px;
+  background:linear-gradient(90deg,#6fffd6,transparent);opacity:.8;
+}
+.theme-book4 .dialog-line-inner{
+  margin:0;
+  padding:5px 0;
+  color:#d8eee8;
+  font-size:1em;
+  line-height:1.72;
+}
+.theme-book4 .dialog-line-inner + .dialog-line-inner{
+  border-top:1px solid rgba(111,255,214,.065);
+}
+.theme-book4 .dialog-line-inner::first-letter{color:#8fffe3}
+
+/* Memories from the previous books: the quoted words themselves are the framed fragment. */
+.theme-book4 .memory-fragment{
+  position:relative;
+  display:block;
+  margin:28px 0 34px;
+  padding:18px 20px;
+  border-radius:2px;
+  font-family:'EB Garamond',serif;
+  font-size:1.02em;
+  line-height:1.65;
+  letter-spacing:.01em;
+  box-shadow:inset 0 0 28px rgba(0,0,0,.16),0 12px 35px rgba(0,0,0,.18);
+}
+.theme-book4 .memory-fragment.book1-fragment{
+  border:1px solid rgba(115,185,212,.42);
+  border-left:2px solid #73b9d4;
+  background:linear-gradient(135deg,rgba(115,185,212,.12),rgba(115,185,212,.025));
+  color:#d9f2fa;
+}
+.theme-book4 .memory-fragment.book2-fragment{
+  border:1px solid rgba(184,184,184,.38);
+  border-left:2px solid #b8b8b8;
+  background:linear-gradient(135deg,rgba(184,184,184,.11),rgba(184,184,184,.025));
+  color:#e8e8e8;
+}
+.theme-book4 .memory-fragment.book3-fragment{
+  border:1px solid rgba(166,123,196,.44);
+  border-left:2px solid #a67bc4;
+  background:linear-gradient(135deg,rgba(166,123,196,.12),rgba(166,123,196,.025));
+  color:#f0e4f8;
+}
+
+/* Strong, visible descent into Limbo. The overlay sits above the page background
+   but below the story, so the world gets darker while the text remains readable. */
+.scroll-darkening{
+  z-index:1;
+  opacity:1;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,calc(var(--scroll-darkness,.08)*.55)),rgba(0,0,0,var(--scroll-darkness,.08))),
+    radial-gradient(ellipse at 50% 48%,transparent 18%,rgba(0,0,0,var(--scroll-vignette,.04)) 100%);
+  mix-blend-mode:normal;
+  transition:background .35s ease;
+}
+
+/* Dialogue speakers — the name is shown clearly before each spoken line. */
+.theme-book4 .dialog-speaker{
+  display:block;
+  margin:0 0 2px;
+  min-width:0;
+  color:#78f0d1;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:.78em;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-shadow:0 0 12px rgba(111,255,214,.12);
+}

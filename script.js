@@ -117,8 +117,16 @@
   function setupSettings(){
     const wrap=document.createElement('div');
     wrap.className='site-settings';
+    const iconMap={
+      'theme-book1':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg>',
+      'theme-book2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2"/></svg>',
+      'theme-book3':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z"/></svg>',
+      'theme-book4':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 5v14M5 12h14M12 12l4-4"/></svg>'
+    };
+    const themeClass=['theme-book1','theme-book2','theme-book3','theme-book4'].find(c=>document.body.classList.contains(c));
+    const icon=iconMap[themeClass] || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 5v5l3 2"/></svg>';
     wrap.innerHTML=`
-      <button class="site-settings-toggle" aria-label="Настройки" title="Настройки">⚙</button>
+      <button class="site-settings-toggle" aria-label="Настройки" title="Настройки">${icon}</button>
       <div class="site-settings-panel" aria-hidden="true">
         <div class="site-settings-title">Настройки</div>
         <label class="safe-toggle"><span><strong>Безопасный режим</strong><small>Скрывает нецензурную лексику</small></span><input type="checkbox" id="safeModeToggle"><i></i></label>
@@ -311,6 +319,27 @@
     container.appendChild(frag);
   }
 
+
+  function setupScrollDarkening(){
+    if(!document.body.classList.contains('theme-book4')) return;
+    let overlay=$('#scrollDarkening');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='scrollDarkening';
+      overlay.className='scroll-darkening';
+      overlay.setAttribute('aria-hidden','true');
+      document.body.prepend(overlay);
+    }
+    const update=()=>{
+      const max=document.documentElement.scrollHeight-window.innerHeight;
+      const p=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0;
+      overlay.style.setProperty('--scroll-darkness',(0.06 + p*0.64).toFixed(3));
+      overlay.style.setProperty('--scroll-vignette',(0.03 + p*0.30).toFixed(3));
+    };
+    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);
+    update();
+  }
 
   function setupGhostSmoke(){
     if(!document.body.classList.contains('theme-book4')) return;
