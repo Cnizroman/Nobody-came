@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Там, где нас нет · Трилогия</title>
+    <title>Там, где нас нет · Никто не вспомнит</title>
     <link rel="stylesheet" href="style.css" />
     <style>
         /* Финальное оформление окна пароля третьей книги */
@@ -84,6 +84,7 @@
                     <a href="book1.html">Дорога из Холода</a>
                     <a href="book2.html">Спасательный круг</a>
                     <a href="book3.html" class="active">Там, где нас нет</a>
+                    <a href="book4.html">Лимбо</a>
                 </nav>
             </header>
 
@@ -265,12 +266,10 @@
                                 <div class="final-voice-wave" aria-hidden="true">
                                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                                 </div>
-                                <div class="final-voice-time"><span class="final-voice-current">0:00</span><span class="final-voice-duration">0:00</span></div>
+                                <div class="final-voice-time"><span class="final-voice-current">0:00</span><span class="final-voice-duration">1:00</span></div>
                             </div>
                         </div>
-                        <audio class="final-voice-audio" preload="metadata">
-                            <source src="final-voice.mp3" type="audio/mpeg">
-                        </audio>
+                        <audio class="final-voice-audio" src="audio/final.mp3" preload="metadata"></audio>
                         <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
                     </div>
 
@@ -290,6 +289,11 @@
                 </div>
 
                 <div class="chapter-end"></div>
+
+            <nav class="book-nav-v2" aria-label="Навигация по циклу">
+                <a href="book2.html">← Спасательный круг</a>
+                <a href="book4.html">Лимбо →</a>
+            </nav>
             </main>
 
             <footer>
@@ -307,6 +311,7 @@
                     <a href="book1.html">Дорога из Холода</a>
                     <a href="book2.html">Спасательный круг</a>
                     <a href="book3.html" class="active">Там, где нас нет</a>
+                    <a href="book4.html">Лимбо</a>
                 </nav>
             </header>
 
@@ -471,7 +476,7 @@
                     </div>
 
                     <p>
-                         На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и я понимаю, что больше не могу подобрать слов. Поэтому я просто записал последнее голосовое.
+                         На следующий же день 12 июля, я, поняв что не смогу смириться и что моя психика уже не будет прежней, я показал ей свой дневник, надеюсь ей понравилась моя история. Сейчас я думаю что, я бы отдал всё что бы изменить. А пока я не смогу так жить, это просто невыносимо для меня. Эта тяжесть давит меня, и я понимаю, что больше не могу подобрать слов. Поэтому я решил записать голосовое, я делал так раньше, это помогает многое обдумать, и услышать самого себя.
                     </p>
 
                     <div class="final-voice" data-final-voice>
@@ -479,7 +484,7 @@
                             <span class="final-voice-icon">◉</span>
                             <div>
                                 <div class="final-voice-title">Голосовое сообщение</div>
-                                <div class="final-voice-meta">избранное · последнее сообщение</div>
+                                <div class="final-voice-meta">Избранное</div>
                             </div>
                         </div>
                         <div class="final-voice-player">
@@ -492,7 +497,7 @@
                             </div>
                         </div>
                         <audio class="final-voice-audio" preload="metadata">
-                            <source src="final-voice.mp3" type="audio/mpeg">
+                            <source src="audio/final.mp3" type="audio/mpeg">
                         </audio>
                         <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
                     </div>
@@ -513,6 +518,11 @@
                 </div>
 
                 <div class="chapter-end"></div>
+
+            <nav class="book-nav-v2" aria-label="Навигация по циклу">
+                <a href="book2.html">← Спасательный круг</a>
+                <a href="book4.html">Лимбо →</a>
+            </nav>
             </main>
 
             <footer>
@@ -615,7 +625,7 @@
             audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Продолжить голосовое');status.textContent='приостановлено';}});
             audio.addEventListener('ended',()=>{play.textContent='↻';play.setAttribute('aria-label','Прослушать голосовое ещё раз');status.textContent='сообщение завершено';paint();if(unfinished) requestAnimationFrame(()=>unfinished.classList.add('visible'));});
             bars.forEach((bar,idx)=>bar.addEventListener('click',()=>{if(audio.duration){audio.currentTime=audio.duration*(idx/bars.length);paint();}}));
-            audio.addEventListener('error',()=>status.textContent='добавьте файл final-voice.mp3 в папку сайта');
+            audio.addEventListener('error',()=>status.textContent='не удалось загрузить audio/final.mp3');
         }
 
         initFinalVoice(document);

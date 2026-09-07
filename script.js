@@ -311,6 +311,36 @@
     container.appendChild(frag);
   }
 
+
+  function setupGhostSmoke(){
+    if(!document.body.classList.contains('theme-book4')) return;
+    let container=$('#ghostSmoke');
+    if(!container){
+      container=document.createElement('div');
+      container.className='ghost-smoke';
+      container.id='ghostSmoke';
+      container.setAttribute('aria-hidden','true');
+      document.body.prepend(container);
+    }
+    if(container.children.length) return;
+    const count=window.innerWidth<600?10:18;
+    const frag=document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const w=document.createElement('i');
+      w.className='ghost-wisp';
+      w.style.setProperty('--x',`${-5+Math.random()*110}%`);
+      w.style.setProperty('--size',`${90+Math.random()*190}px`);
+      w.style.setProperty('--blur',`${8+Math.random()*16}px`);
+      w.style.setProperty('--duration',`${14+Math.random()*17}s`);
+      w.style.setProperty('--delay',`${-Math.random()*24}s`);
+      w.style.setProperty('--drift',`${-90+Math.random()*180}px`);
+      w.style.setProperty('--rot',`${-25+Math.random()*50}deg`);
+      w.style.setProperty('--opacity',`${(.18+Math.random()*.28).toFixed(2)}`);
+      frag.appendChild(w);
+    }
+    container.appendChild(frag);
+  }
+
   function improvePassword(){
     const overlay=$('#passwordOverlay');
     const input=$('#passwordInput');
@@ -364,6 +394,7 @@
     setupChapterMarkers();
     setupStars();
     setupSnow();
+    setupGhostSmoke();
     improvePassword();
     setTimeout(restoreProgress,350);
   }
