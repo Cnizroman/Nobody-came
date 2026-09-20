@@ -945,3 +945,127 @@ body.home-v2 .site-settings{bottom:22px}
   text-transform:uppercase;
   text-shadow:0 0 12px rgba(111,255,214,.12);
 }
+
+
+/* =========================================================
+   БЕЛАЯ ГОЛОВА — отдельная история
+   Использует ту же визуальную систему, что и тетралогия:
+   EB Garamond + Playfair, тёмный фон, тонкие линии,
+   золотой акцент, тот же reader chrome.
+   ========================================================= */
+.theme-belaya{
+  --accent:#c8a96e;
+  --accent-rgb:200,169,110;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(200,169,110,.085),transparent 40%),
+    radial-gradient(circle at 100% 100%,rgba(255,255,255,.025),transparent 35%),
+    #070707;
+}
+.theme-belaya .container{position:relative;z-index:2}
+.theme-belaya h1{color:#eee6de;text-shadow:0 8px 35px rgba(0,0,0,.45)}
+.theme-belaya .subtitle{color:#77716b}
+.theme-belaya .top-nav a{color:#817a74}
+.theme-belaya .top-nav a:hover{color:#ddd;border-color:rgba(200,169,110,.18);background:rgba(200,169,110,.045)}
+.theme-belaya .top-nav a.active{color:#c8a96e;border-color:rgba(200,169,110,.3);background:rgba(200,169,110,.07)}
+.standalone-label{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-bottom:18px;padding:7px 11px;
+  border:1px solid rgba(255,255,255,.11);
+  color:#8b8680;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  background:rgba(255,255,255,.025);
+}
+.standalone-label::before{content:'';width:20px;height:1px;background:#73737a}
+.belaya-story{margin-top:45px}
+.belaya-story h3{margin-top:88px;margin-bottom:30px}
+.belaya-story h3:first-child{margin-top:20px}
+.belaya-story p{max-width:780px}
+.story-warning{
+  margin:0 0 55px;
+  padding:18px 20px;
+  border-top:1px solid rgba(255,255,255,.10);
+  border-bottom:1px solid rgba(255,255,255,.10);
+  color:#817b75;
+  font-size:14px;
+  line-height:1.65;
+}
+.story-warning strong{color:#c8a96e;font-weight:500}
+.alfred-portrait{margin:58px auto 64px;max-width:620px;text-align:center}
+.alfred-frame{
+  padding:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#000;
+  box-shadow:0 25px 70px rgba(0,0,0,.55),inset 0 0 0 1px rgba(200,169,110,.045);
+}
+.alfred-frame img{display:block;width:100%;height:auto;filter:contrast(1.02)}
+.alfred-portrait figcaption{margin-top:13px;color:#706b65;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.theme-belaya .site-settings-toggle{border-color:rgba(235,235,235,.28);color:#ededed;background:rgba(10,10,10,.88)}
+.theme-belaya .site-settings-toggle:hover{border-color:rgba(255,255,255,.65);color:#fff}
+.theme-belaya .site-settings-panel{border-color:rgba(235,235,235,.16);background:rgba(10,10,10,.95)}
+.theme-belaya .site-settings-title{color:#f0f0f0}
+.theme-belaya .safe-toggle input:checked+i{background:#555;border-color:#aaa}
+.theme-belaya .safe-toggle input:checked+i:after{background:#fff}
+.theme-belaya .reader-tools-toggle{border-color:rgba(235,235,235,.25);color:#eee}
+.theme-belaya .reader-tools-panel{border-color:rgba(235,235,235,.15);background:rgba(10,10,10,.95)}
+.theme-belaya footer{color:#5d5853}
+
+/* Standalone card on the home page: same card language, clearly separated from the four books. */
+.standalone-section{margin-top:72px;padding-top:0}
+.standalone-divider{
+  height:30px;margin:0 0 55px;
+  border-top:1px solid rgba(255,255,255,.14);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+}
+.standalone-heading{margin:0 0 22px;font:500 clamp(26px,4vw,38px)/1.1 'Playfair Display',serif;color:#ddd7d0}
+.standalone-note{margin:0 0 25px;color:#716c66;font-size:14px;line-height:1.65}
+.standalone-card{--card-accent:#c8a96e;--card-glow:rgba(200,169,110,.08)}
+.standalone-card .story-tag{color:#77716b}
+.standalone-card .story-number{color:#5e5953}
+.standalone-card .story-arrow{color:#77716b}
+@media(max-width:560px){
+  .standalone-label{font-size:9px;letter-spacing:.13em}
+  .alfred-portrait{margin-left:-2px;margin-right:-2px}
+  .alfred-frame{padding:8px}
+}
+
+/* BELAYA GOLOVA — canonical tetralogy dialogue component, recolored */
+.theme-belaya .dialog{
+  border-color:rgba(255,255,255,.13);
+  border-left-color:#e8e8e8;
+  background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  box-shadow:inset 0 0 42px rgba(255,255,255,.012),0 18px 55px rgba(0,0,0,.28);
+}
+.theme-belaya .dialog::before{color:rgba(255,255,255,.20)}
+.theme-belaya .dialog::after{background:linear-gradient(90deg,#e8e8e8,transparent)}
+.theme-belaya .dialog-speaker{color:#f2f2f2;text-shadow:0 0 12px rgba(255,255,255,.08)}
+.theme-belaya .dialog-line-inner{margin:0;padding:5px 0;color:#e6e6e6;font-size:1em;line-height:1.72}
+.theme-belaya .dialog-line-inner + .dialog-line-inner{border-top:1px solid rgba(255,255,255,.06)}
+
+/* Final consistency pass: homepage / hidden page settings controls */
+body.home-v2 .site-settings-toggle{
+  border-color:rgba(166,123,196,.30);
+  color:#b59bd0;
+  background:rgba(8,8,12,.82);
+}
+body.home-v2 .site-settings-toggle:hover{
+  border-color:rgba(196,151,229,.65);
+  color:#eadcff;
+}
+body.secret-page .site-settings-toggle{
+  border-color:rgba(143,112,192,.34);
+  color:#9678b8;
+  background:rgba(8,8,12,.84);
+}
+body.secret-page .site-settings-toggle:hover{
+  border-color:rgba(181,150,225,.68);
+  color:#e4d5f2;
+}
+
+
+/* Белая голова — имена говорящих как в «7 Дней» */
+.theme-belaya .dialog{border-color:rgba(255,255,255,.16);border-left-color:#e8e8e8;background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.012));box-shadow:inset 0 0 42px rgba(255,255,255,.012),0 18px 55px rgba(0,0,0,.28)}
+.theme-belaya .dialog::before{color:rgba(255,255,255,.20)}
+.theme-belaya .dialog::after{background:linear-gradient(90deg,#e8e8e8,transparent)}
+.theme-belaya .dialog-speaker{display:block;margin:0 0 2px;min-width:0;color:#f2f2f2;font-family:'Playfair Display',Georgia,serif;font-size:.78em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 12px rgba(255,255,255,.08)}
+.theme-belaya .dialog-line-inner{margin:0;padding:5px 0;color:#e6e6e6;font-size:1em;line-height:1.72}
+.theme-belaya .dialog-line-inner + .dialog-line-inner{border-top:1px solid rgba(255,255,255,.06)}

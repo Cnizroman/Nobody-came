@@ -37,7 +37,7 @@
                 <a href="book1.html">Дорога из Холода</a>
                 <a href="book2.html">Спасательный круг</a>
                 <a href="book3.html">Там, где нас нет</a>
-                <a href="book4.html">Лимбо</a>
+                <a href="book4.html">7 Дней</a>
             </nav>
         </header>
 
@@ -53,7 +53,7 @@
         </div>
 
         
-        <section class="reader-hero-v2" aria-label="О странице" style="--reader-accent:#c8a96e">
+        <section class="reader-hero-v2" aria-label="О странице" style="--reader-accent:#c8a96e;--reader-rgb:200,169,110">
             <div class="reader-kicker">ВСТУПЛЕНИЕ</div>
             <p class="reader-lede">Здесь начинается не история — здесь начинается попытка её понять.</p>
             <span class="reader-badge" aria-hidden="true">0</span>
@@ -80,41 +80,5 @@
         </footer>
     </div>
     <script src="script.js"></script>
-    <script>
-        // Управление аудиоплеером
-        (function() {
-            const audio = document.getElementById('introAudio');
-            const playBtn = document.getElementById('playBtn');
-            const status = document.getElementById('audioStatus');
-
-            if (!audio || !playBtn || !status) return;
-
-            playBtn.addEventListener('click', function() {
-                if (audio.paused) {
-                    audio.play().catch(e => {
-                        console.warn('Автовоспроизведение заблокировано:', e);
-                        status.textContent = '(ошибка воспроизведения)';
-                    });
-                    playBtn.textContent = '⏸ Пауза';
-                    status.textContent = '(играет)';
-                } else {
-                    audio.pause();
-                    playBtn.textContent = '▶ Воспроизвести озвучку';
-                    status.textContent = '(приостановлено)';
-                }
-            });
-
-            audio.addEventListener('ended', function() {
-                playBtn.textContent = '▶ Воспроизвести озвучку';
-                status.textContent = '(завершено)';
-            });
-
-            audio.addEventListener('error', function() {
-                status.textContent = '(файл не найден)';
-                playBtn.disabled = true;
-                playBtn.style.opacity = '0.5';
-            });
-        })();
-    </script>
 </body>
 </html>

@@ -122,11 +122,9 @@
       'theme-book2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2"/></svg>',
       'theme-book3':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z"/></svg>',
       'theme-book4':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 5v14M5 12h14M12 12l4-4"/></svg>',
-      'theme-belaya':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.1 9l5.9 3-5.9 3L12 21.2 9.9 15 4 12l5.9-3L12 2.8Z"/><path d="M12 7.5v9M7.5 12h9"/></svg>',
-      'home-v2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M8 12h8M12 8v8"/></svg>',
-      'secret-page':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 12h8M12 8v8"/></svg>'
+      'theme-belaya':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.1 9l5.9 3-5.9 3L12 21.2 9.9 15 4 12l5.9-3L12 2.8Z"/><path d="M12 7.5v9M7.5 12h9"/></svg>'
     };
-    const themeClass=['theme-book1','theme-book2','theme-book3','theme-book4','theme-belaya','theme-intro','home-v2','secret-page'].find(c=>document.body.classList.contains(c));
+    const themeClass=['theme-book1','theme-book2','theme-book3','theme-book4','theme-belaya'].find(c=>document.body.classList.contains(c));
     const icon=iconMap[themeClass] || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 5v5l3 2"/></svg>';
     wrap.innerHTML=`
       <button class="site-settings-toggle" aria-label="Настройки" title="Настройки">${icon}</button>
@@ -211,10 +209,8 @@
     const audio=document.querySelector('audio');
     if(!audio) return;
 
-    const player=audio.closest('.audio-player');
-    if(!player) return;
     const id=audio.id;
-    const button=player.querySelector('button.play-btn');
+    const button=audio.closest('.audio-player')?.querySelector('button.play-btn');
     const status=audio.closest('.audio-player')?.querySelector('.audio-status');
     const key=audioKey;
 
