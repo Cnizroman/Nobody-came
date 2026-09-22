@@ -1154,3 +1154,9 @@ body.secret-page .site-settings-toggle:hover{
   color:#dffcff;
   text-shadow:0 0 10px rgba(0,234,255,.9),0 0 24px rgba(0,234,255,.35);
 }
+
+/* Белая голова — диалоги в том же формате, что и в «7 Дней»: имя говорящего отдельной строкой. */
+.theme-belaya .dialog-line-inner{padding:8px 0 10px;line-height:1.72}
+.theme-belaya .dialog-line-inner + .dialog-line-inner{border-top:1px solid rgba(255,255,255,.07)}
+.theme-belaya .dialog-text{display:block;color:#e6e6e6}
+.theme-belaya .dialog-speaker{display:block;margin:0 0 3px;min-width:0;color:#f2f2f2;font-family:'Playfair Display',Georgia,serif;font-size:.78em;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 12px rgba(255,255,255,.08)}
