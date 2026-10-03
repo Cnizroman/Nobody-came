@@ -99,7 +99,8 @@
                     <a href="book2.html">Спасательный круг</a>
                     <a href="book3.html" class="active">Там, где нас нет</a>
                     <a href="book4.html">7 Дней</a>
-                </nav>
+                
+</nav>
             </header>
 
             <main id="content">
@@ -549,66 +550,99 @@
 
     <script>
         // ============================================================
-        // ЗАЩИТА ПАРОЛЕМ — SHA-256 + фрагментированная таблица
+        //  ЗАЩИТА ПАРОЛЕМ
         // ============================================================
         (function() {
-            const overlay = document.getElementById('passwordOverlay');
-            const content = document.getElementById('book-content');
-            const input = document.getElementById('passwordInput');
-            const error = document.getElementById('errorMsg');
-            const unlock = document.getElementById('unlockBtn');
-            const close = document.getElementById('closePasswordBtn');
-            const box = document.getElementById('passwordBox');
-            if (!overlay || !content || !input || !unlock || !close || !box) return;
+            const _p = [1095, 1082, 1092, 1082, 1095, 1101, 1095, 1087];
+            const _b = [1095, 1082, 1105, 1082, 1093, 1096];
 
-            const unpack = (parts) => parts.slice().reverse().map(x => x.split('').reverse().join('')).join('');
-            const normalTarget = unpack(['40c4d2ac', '81b9326f', '8279e9e9', '4ad44fd8', '1ff8d773', '02be7c77', '62679d67', '3e3f814e']);
-            const beginningTarget = unpack(['00435b04', 'e50ba33e', '9cbbbb7d', '57ec8f1f', '08d369ec', 'dd17279d', '0be32bfd', 'bf16c558']);
+            const o = document.getElementById('passwordOverlay');
+            const c = document.getElementById('book-content');
+            const i = document.getElementById('passwordInput');
+            const e = document.getElementById('errorMsg');
+            const b = document.getElementById('unlockBtn');
+            const x = document.getElementById('closePasswordBtn');
+            const bx = document.getElementById('passwordBox');
 
-            async function digest(value) {
-                const bytes = new TextEncoder().encode(value);
-                const hash = await crypto.subtle.digest('SHA-256', bytes);
-                return Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, '0')).join('');
+            function matches(value, encoded) {
+                if (value.length !== encoded.length) return false;
+                for (let n = 0; n < encoded.length; n++) {
+                    if (value.charCodeAt(n) !== encoded[n] - 10) return false;
+                }
+                return true;
             }
 
             function openBook(mode) {
                 if (mode === 'beginning') {
                     const template = document.getElementById('beginning-content');
-                    if (template) content.innerHTML = template.innerHTML;
+                    if (template) c.innerHTML = template.innerHTML;
                 }
-                overlay.classList.add('hidden');
-                content.classList.add('visible');
-                if (typeof initFinalVoice === 'function') initFinalVoice(content);
-                error.textContent = '';
-                input.value = '';
+                o.classList.add('hidden');
+                c.classList.add('visible');
+                initFinalVoice(c);
+                e.textContent = '';
+                i.value = '';
             }
 
-            async function checkPassword() {
-                const value = input.value.trim().toLocaleLowerCase('ru-RU');
-                if (!value) return;
-                unlock.disabled = true;
-                try {
-                    const hash = await digest(value);
-                    if (hash === normalTarget) return openBook('normal');
-                    if (hash === beginningTarget) return openBook('beginning');
-                    error.textContent = '❌ Неверный пароль.';
-                    box.classList.remove('shake');
-                    void box.offsetWidth;
-                    box.classList.add('shake');
-                    setTimeout(() => box.classList.remove('shake'), 400);
-                    input.value = '';
-                    input.focus();
-                } finally {
-                    unlock.disabled = false;
+            function check() {
+                const value = i.value.trim().toLowerCase();
+
+                if (matches(value, _p)) {
+                    openBook('normal');
+                    return;
                 }
+
+                if (matches(value, _b)) {
+                    openBook('beginning');
+                    return;
+                }
+
+                e.textContent = '❌ Неверный пароль.';
+                bx.classList.add('shake');
+                setTimeout(() => bx.classList.remove('shake'), 400);
+                i.value = '';
+                i.focus();
             }
 
-            unlock.addEventListener('click', checkPassword);
-            input.addEventListener('keydown', event => {
-                if (event.key === 'Enter') { event.preventDefault(); checkPassword(); }
+            b.addEventListener('click', check);
+            i.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') {
+                    ev.preventDefault();
+                    check();
+                }
             });
-            close.addEventListener('click', () => { window.location.href = 'index.html'; });
+            x.addEventListener('click', () => window.location.href = 'index.html');
+            i.focus();
         })();
+
+        // ============================================================
+        //  ФИНАЛЬНОЕ ГОЛОСОВОЕ
+        // ============================================================
+        function initFinalVoice(root) {
+            const scope = root || document;
+            const box = scope.querySelector ? scope.querySelector('[data-final-voice]') : null;
+            if (!box || box.dataset.ready === '1') return;
+            box.dataset.ready = '1';
+            const audio = box.querySelector('.final-voice-audio');
+            const play = box.querySelector('.final-voice-play');
+            const status = box.querySelector('.final-voice-status');
+            const current = box.querySelector('.final-voice-current');
+            const duration = box.querySelector('.final-voice-duration');
+            const bars = [...box.querySelectorAll('.final-voice-wave i')];
+            const unfinished = scope.querySelector('[data-message-unfinished]');
+            const fmt = sec => { if (!Number.isFinite(sec)) return '0:00'; sec=Math.max(0,Math.floor(sec)); return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); };
+            const paint = () => { const ratio=audio.duration?audio.currentTime/audio.duration:0; bars.forEach((bar,idx)=>bar.classList.toggle('active',idx/bars.length<ratio)); current.textContent=fmt(audio.currentTime); };
+            play.addEventListener('click',()=>{
+                if(audio.paused){ audio.play().then(()=>{play.textContent='❚❚';play.setAttribute('aria-label','Поставить голосовое на паузу');status.textContent='идёт воспроизведение';}).catch(()=>{status.textContent='не удалось воспроизвести аудио';}); }
+                else audio.pause();
+            });
+            audio.addEventListener('loadedmetadata',()=>duration.textContent=fmt(audio.duration));
+            audio.addEventListener('timeupdate',paint);
+            audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Продолжить голосовое');status.textContent='приостановлено';}});
+            audio.addEventListener('ended',()=>{play.textContent='↻';play.setAttribute('aria-label','Прослушать голосовое ещё раз');status.textContent='сообщение завершено';paint();if(unfinished) requestAnimationFrame(()=>unfinished.classList.add('visible'));});
+            bars.forEach((bar,idx)=>bar.addEventListener('click',()=>{if(audio.duration){audio.currentTime=audio.duration*(idx/bars.length);paint();}}));
+            audio.addEventListener('error',()=>status.textContent='не удалось загрузить audio/final.mp3');
+        }
 
         initFinalVoice(document);
 

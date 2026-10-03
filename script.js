@@ -552,6 +552,43 @@
     });
   }
 
+  /* ---------- навигация по главам внизу ---------- */
+  function setupChapterMarkers(){
+    const main = $('main');
+    if(!main) return;
+    const headings = [...main.querySelectorAll('h3,h4')];
+    if(headings.length < 2) return;
+
+    headings.forEach((h, i) => { if(!h.id) h.id = `chapter-${i+1}`; h.dataset.chapter = i + 1; });
+
+    const nav = document.createElement('nav');
+    nav.className = 'chapter-nav';
+    nav.setAttribute('aria-label', 'Навигация по главам');
+    nav.innerHTML = `
+      <button type="button" data-chapter-nav="prev">← Предыдущая часть</button>
+      <button type="button" data-chapter-nav="next">Следующая часть →</button>
+    `;
+    main.appendChild(nav);
+
+    nav.addEventListener('click', e => {
+      const btn = e.target.closest('[data-chapter-nav]');
+      if(!btn) return;
+      const chapters = getChapters();
+      if(!chapters.length){ window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'}); return; }
+      const idx = currentChapterIndex(chapters);
+      if(btn.dataset.chapterNav === 'next'){
+        if(idx + 1 < chapters.length) goTo(chapters[idx + 1]);
+        else window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'});
+      }else{
+        // Если мы глубоко внутри главы — сначала к её началу, иначе к предыдущей.
+        const cur = chapters[idx];
+        if(cur && cur.getBoundingClientRect().top < -160) goTo(cur);
+        else if(idx - 1 >= 0) goTo(chapters[idx - 1]);
+        else window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'});
+      }
+    });
+  }
+
   /* ---------- атмосферные эффекты ---------- */
   function setupStars(){
     if(!document.body.classList.contains('theme-book3') || reduceMotion) return;
@@ -726,6 +763,7 @@
     }
     setupReadingTime();
     setupAudio();
+    setupChapterMarkers();
     setupStars();
     setupSnow();
     setupScrollDarkening();
