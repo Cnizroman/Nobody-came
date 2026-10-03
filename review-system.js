@@ -45,6 +45,7 @@
       ${CRITERIA.map(c=>`<label class="review-slider"><span><b>${c.label}</b><strong data-value-for="${c.key}">0 / ${c.max}</strong></span><input type="range" name="${c.key}" min="0" max="${c.max}" value="0" step="1" data-slider="${c.key}"></label>`).join('')}
     </div>
     <div class="review-total"><span>ИТОГОВАЯ ОЦЕНКА</span><strong data-total>0 / ${MAX_TOTAL}</strong></div>
+    <div class="review-hp" aria-hidden="true"><label>Не заполняйте это поле<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <label class="review-field"><span>ТЕКСТ РЕЦЕНЗИИ</span><textarea name="text" rows="7" maxlength="3000" required placeholder="Что вы думаете об этой истории?"></textarea></label>
     <div class="review-form-actions"><button type="submit">ОТПРАВИТЬ НА МОДЕРАЦИЮ</button><button type="button" class="review-cancel" data-review-cancel>ОТМЕНА</button></div>
     <p class="review-note">После отправки запись получает статус PENDING. Публично она появится только после модерации.</p>
@@ -103,6 +104,21 @@
     const fd=new FormData(form);
     const text=String(fd.get('text')||'').trim();
     if(!text){form.querySelector('[name=text]').focus();return;}
+
+    // Скрытое поле-ловушка: заполняют только боты. Делаем вид, что всё прошло.
+    if(String(fd.get('website')||'').trim()){
+      form.reset(); updateTotal(form);
+      setMessage(form,'Запись принята и отправлена на модерацию.');
+      return;
+    }
+    // Не чаще одной отправки в минуту с одного браузера.
+    const COOLDOWN_MS=60000, LAST_KEY='nobody-review-last';
+    let last=0; try{ last=Number(localStorage.getItem(LAST_KEY)||0); }catch(e){}
+    const wait=COOLDOWN_MS-(Date.now()-last);
+    if(wait>0){
+      setMessage(form,`Подождите ещё ${Math.ceil(wait/1000)} сек. перед следующей отправкой.`,true);
+      return;
+    }
     const payload={
       book_id:root.dataset.reviewBook,
       name:String(fd.get('name')||'').trim()||'Анонимный читатель',
@@ -125,6 +141,7 @@
       setMessage(form,'Не удалось отправить рецензию. Попробуйте ещё раз.',true);
       return;
     }
+    try{ localStorage.setItem(LAST_KEY,String(Date.now())); }catch(e){}
     form.reset(); updateTotal(form);
     setMessage(form,'Запись принята и отправлена на модерацию.');
     setTimeout(()=>{form.querySelector('[data-review-message]').classList.remove('show');form.hidden=true;root.querySelector('[data-review-open]').hidden=false;},1800);

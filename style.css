@@ -4,7 +4,8 @@
    Универсальный стиль для index / intro / book1 / book2 / book3
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap');
+/* Шрифты подключаются через <link rel="preconnect"> + <link> в <head> каждой страницы:
+   @import блокирует отрисовку и грузится после CSS. */
 
 :root{
   --bg:#070707;
@@ -1182,3 +1183,90 @@ body.secret-page .site-settings-toggle:hover{
 .review-total{display:flex;justify-content:space-between;align-items:center;margin:20px 0 22px;padding:15px 14px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}.review-total>span{margin:0}.review-total strong{color:#eee;font:500 25px "Playfair Display",serif}
 .review-form-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.review-form-actions button{margin:0!important}.review-form-actions .review-cancel{padding:11px 14px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#777;font:600 10px "Playfair Display",serif;letter-spacing:.12em;cursor:pointer}.review-note{margin:13px 0 0;color:#555;font:12px/1.55 "EB Garamond",serif}.review-message{height:0;overflow:hidden;color:var(--review-accent,#aaa);font:13px "EB Garamond",serif;transition:.2s}.review-message.show{height:auto;margin-top:14px}
 @media(max-width:650px){.review-archive-head{padding:20px 17px;flex-direction:column}.review-summary{text-align:left}.review-published{padding:15px 12px 1px}.review-form{margin:0 12px 18px;padding:15px}.review-open{margin-left:12px;margin-right:12px}.review-breakdown{display:grid;grid-template-columns:1fr 1fr}.review-card-top>strong{font-size:18px}}
+
+
+/* =========================================================
+   2.1 — ДОСТУПНОСТЬ, УДОБСТВО ЧТЕНИЯ, ПЕЧАТЬ
+   Дополнения поверх существующих стилей; дизайн не меняется.
+   ========================================================= */
+:root{color-scheme:dark;--muted:#8a847d}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+h1,h3,h4{text-wrap:balance}
+
+.sr-only{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.skip-link{position:fixed;left:12px;top:-60px;z-index:3000;padding:10px 16px;background:#111;color:#eee;border:1px solid var(--accent);text-decoration:none;font-size:15px;transition:top .2s ease}
+.skip-link:focus{top:12px}
+
+:where(a,button,summary,[tabindex]):focus-visible,
+.safe-toggle input:focus-visible+i,
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.safe-toggle input{display:block;position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.safe-toggle{position:relative}
+
+/* Закрытые панели не должны ловить фокус с клавиатуры */
+.reader-tools:not(.open) .reader-tools-panel{visibility:hidden}
+.reader-tools.open .reader-tools-panel{visibility:visible}
+.reader-tools-panel{max-height:min(78vh,640px);overflow-y:auto;overscroll-behavior:contain}
+.reader-tools-toggle,.site-settings-toggle,.back-top{touch-action:manipulation}
+.tool-row button[aria-pressed="true"]{color:var(--accent);border-color:rgba(var(--accent-rgb),.35)}
+
+/* Содержание */
+.tool-toc{margin-top:6px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.tool-toc[hidden]{display:none}
+.tool-toc-title{color:#8f8983;font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}
+.tool-toc-list{display:flex;flex-direction:column;max-height:200px;overflow-y:auto;overscroll-behavior:contain;margin:0 -6px}
+.tool-toc-list button{text-align:left;padding:7px 6px;border:0;border-left:2px solid transparent;background:none;color:#a39d96;cursor:pointer;font-size:14px;line-height:1.35}
+.tool-toc-list button:hover{color:#eee;background:rgba(255,255,255,.04)}
+.tool-toc-list button.current{color:var(--accent);border-left-color:var(--accent)}
+
+/* Время чтения */
+.reader-time{color:#8d8780;font-weight:500;letter-spacing:.14em;white-space:nowrap}
+.reader-time::before{content:'·';margin-right:10px;opacity:.7}
+
+/* Кнопки навигации по главам (раньше были ссылками-якорями) */
+.chapter-nav button{font:inherit;color:#8f8983;background:none;border:0;padding:10px 0;cursor:pointer;transition:color .2s ease}
+.chapter-nav button:hover{color:var(--accent)}
+
+.play-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Не прячем слово «Содержание» и прогресс при фокус-режиме */
+.focus-mode .reader-hero-v2,.focus-mode .reader-note-v2{opacity:.35;transition:opacity .3s ease}
+
+/* Уважение к настройке «уменьшить движение» */
+@media(prefers-reduced-motion:reduce){
+  .snow-container,.stars-container,.ghost-smoke,.home-orb,.home-noise{display:none!important}
+  html{scroll-behavior:auto}
+}
+
+/* Печать: только текст, на светлом фоне */
+@media print{
+  body{background:#fff!important;color:#000!important}
+  .side-left,.side-right,.top-nav,.reader-tools,.site-settings,.back-top,.reader-progress,.audio-player,
+  .snow-container,.stars-container,.ghost-smoke,.scroll-darkening,.review-system,.chapter-nav,.skip-link,
+  .reader-note-v2,.book-nav-v2,.reader-footer-v2{display:none!important}
+  .container{width:100%;padding:0}
+  header::after{display:none}
+  h1,h3,h4,.gold{color:#000!important;text-shadow:none!important}
+  main{width:100%;margin:0}
+  main::before{display:none}
+  main p{color:#000!important;font-size:12pt;line-height:1.55;orphans:3;widows:3}
+  main p:first-child::first-letter{color:#000}
+  .highlight{background:none!important;color:#000!important;font-style:italic}
+  h3,h4{break-after:avoid;page-break-after:avoid}
+}
+.alfred-portrait figcaption{color:#8a847d}
+
+/* Поле-ловушка для ботов в форме рецензии */
+.review-hp{position:absolute!important;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+
+/* Пока открыта панель чтения, шестерёнку настроек сайта прячем — она лежала поверх панели */
+.reader-tools.open + .site-settings:not(.open){opacity:0;pointer-events:none;transition:opacity .2s ease}
+
+/* Горизонтальное «качание» страницы на телефонах: декоративное свечение main::before
+   выступало на 80px за края экрана, из-за чего мобильные браузеры уменьшали масштаб страницы
+   и уводили плавающие кнопки за границу экрана. */
+@media(max-width:900px){main::before{inset:-50px -12px}}
+html,body{max-width:100%}
+body{overflow-x:hidden}
+@supports (overflow:clip){body{overflow-x:clip}}

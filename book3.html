@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Там, где нас нет · Никто не вспомнит</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2308090d'/%3E%3Cpath d='M32 14v36M14 32h36' stroke='%23c8a96e' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='11' fill='none' stroke='%23c8a96e' stroke-width='2.5'/%3E%3C/svg%3E">
+<meta name="color-scheme" content="dark">
+<meta property="og:site_name" content="Никто не вспомнит">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Там, где нас нет · Никто не вспомнит">
+<meta name="twitter:card" content="summary">
+<meta property="og:description" content="Там, где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
+<meta name="description" content="Там, где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
+<meta name="theme-color" content="#06070d">
+<link rel="stylesheet" href="style.css" />
     <style>
         /* Финальное оформление окна пароля третьей книги */
         .password-box .close-btn {
@@ -56,8 +69,9 @@
 </style>
 </head>
 <body class="theme-book3">
-    <div class="side-left"><span class="side-title">Там, где нас нет</span></div>
-    <div class="side-right"><span class="side-title">Книга третья</span></div>
+<a class="skip-link" href="#content">К тексту</a>
+    <div class="side-left" aria-hidden="true"><span class="side-title">Там, где нас нет</span></div>
+    <div class="side-right" aria-hidden="true"><span class="side-title">Книга третья</span></div>
 
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-box" id="passwordBox">
@@ -88,7 +102,7 @@
                 </nav>
             </header>
 
-            <main>
+            <main id="content">
                 <h4>Пролог</h4>
                 <p>Я думал, у меня есть шанс добиться чего-то большего. Думал, что я интересен человеку. Я давал себе ложные надежды.</p>
                 <p>Всё началось с того, что она пришла к нам в класс. Мне было шестнадцать, я уже был с ней знаком через общую подругу Иру. Как мне показалось, ей было тяжело начать с кем-то разговаривать, поэтому я сделал первый шаг. Это было 27 февраля. Я написал ей: <span class="highlight">«Тебя добавить в группу класса?»</span> Честно? Сейчас я жалею о том, что начал тот диалог.</p>
@@ -535,99 +549,66 @@
 
     <script>
         // ============================================================
-        //  ЗАЩИТА ПАРОЛЕМ
+        // ЗАЩИТА ПАРОЛЕМ — SHA-256 + фрагментированная таблица
         // ============================================================
         (function() {
-            const _p = [1095, 1082, 1092, 1082, 1095, 1101, 1095, 1087];
-            const _b = [1095, 1082, 1105, 1082, 1093, 1096];
+            const overlay = document.getElementById('passwordOverlay');
+            const content = document.getElementById('book-content');
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('errorMsg');
+            const unlock = document.getElementById('unlockBtn');
+            const close = document.getElementById('closePasswordBtn');
+            const box = document.getElementById('passwordBox');
+            if (!overlay || !content || !input || !unlock || !close || !box) return;
 
-            const o = document.getElementById('passwordOverlay');
-            const c = document.getElementById('book-content');
-            const i = document.getElementById('passwordInput');
-            const e = document.getElementById('errorMsg');
-            const b = document.getElementById('unlockBtn');
-            const x = document.getElementById('closePasswordBtn');
-            const bx = document.getElementById('passwordBox');
+            const unpack = (parts) => parts.slice().reverse().map(x => x.split('').reverse().join('')).join('');
+            const normalTarget = unpack(['40c4d2ac', '81b9326f', '8279e9e9', '4ad44fd8', '1ff8d773', '02be7c77', '62679d67', '3e3f814e']);
+            const beginningTarget = unpack(['00435b04', 'e50ba33e', '9cbbbb7d', '57ec8f1f', '08d369ec', 'dd17279d', '0be32bfd', 'bf16c558']);
 
-            function matches(value, encoded) {
-                if (value.length !== encoded.length) return false;
-                for (let n = 0; n < encoded.length; n++) {
-                    if (value.charCodeAt(n) !== encoded[n] - 10) return false;
-                }
-                return true;
+            async function digest(value) {
+                const bytes = new TextEncoder().encode(value);
+                const hash = await crypto.subtle.digest('SHA-256', bytes);
+                return Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, '0')).join('');
             }
 
             function openBook(mode) {
                 if (mode === 'beginning') {
                     const template = document.getElementById('beginning-content');
-                    if (template) c.innerHTML = template.innerHTML;
+                    if (template) content.innerHTML = template.innerHTML;
                 }
-                o.classList.add('hidden');
-                c.classList.add('visible');
-                initFinalVoice(c);
-                e.textContent = '';
-                i.value = '';
+                overlay.classList.add('hidden');
+                content.classList.add('visible');
+                if (typeof initFinalVoice === 'function') initFinalVoice(content);
+                error.textContent = '';
+                input.value = '';
             }
 
-            function check() {
-                const value = i.value.trim().toLowerCase();
-
-                if (matches(value, _p)) {
-                    openBook('normal');
-                    return;
+            async function checkPassword() {
+                const value = input.value.trim().toLocaleLowerCase('ru-RU');
+                if (!value) return;
+                unlock.disabled = true;
+                try {
+                    const hash = await digest(value);
+                    if (hash === normalTarget) return openBook('normal');
+                    if (hash === beginningTarget) return openBook('beginning');
+                    error.textContent = '❌ Неверный пароль.';
+                    box.classList.remove('shake');
+                    void box.offsetWidth;
+                    box.classList.add('shake');
+                    setTimeout(() => box.classList.remove('shake'), 400);
+                    input.value = '';
+                    input.focus();
+                } finally {
+                    unlock.disabled = false;
                 }
-
-                if (matches(value, _b)) {
-                    openBook('beginning');
-                    return;
-                }
-
-                e.textContent = '❌ Неверный пароль.';
-                bx.classList.add('shake');
-                setTimeout(() => bx.classList.remove('shake'), 400);
-                i.value = '';
-                i.focus();
             }
 
-            b.addEventListener('click', check);
-            i.addEventListener('keydown', (ev) => {
-                if (ev.key === 'Enter') {
-                    ev.preventDefault();
-                    check();
-                }
+            unlock.addEventListener('click', checkPassword);
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Enter') { event.preventDefault(); checkPassword(); }
             });
-            x.addEventListener('click', () => window.location.href = 'index.html');
-            i.focus();
+            close.addEventListener('click', () => { window.location.href = 'index.html'; });
         })();
-
-        // ============================================================
-        //  ФИНАЛЬНОЕ ГОЛОСОВОЕ
-        // ============================================================
-        function initFinalVoice(root) {
-            const scope = root || document;
-            const box = scope.querySelector ? scope.querySelector('[data-final-voice]') : null;
-            if (!box || box.dataset.ready === '1') return;
-            box.dataset.ready = '1';
-            const audio = box.querySelector('.final-voice-audio');
-            const play = box.querySelector('.final-voice-play');
-            const status = box.querySelector('.final-voice-status');
-            const current = box.querySelector('.final-voice-current');
-            const duration = box.querySelector('.final-voice-duration');
-            const bars = [...box.querySelectorAll('.final-voice-wave i')];
-            const unfinished = scope.querySelector('[data-message-unfinished]');
-            const fmt = sec => { if (!Number.isFinite(sec)) return '0:00'; sec=Math.max(0,Math.floor(sec)); return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0'); };
-            const paint = () => { const ratio=audio.duration?audio.currentTime/audio.duration:0; bars.forEach((bar,idx)=>bar.classList.toggle('active',idx/bars.length<ratio)); current.textContent=fmt(audio.currentTime); };
-            play.addEventListener('click',()=>{
-                if(audio.paused){ audio.play().then(()=>{play.textContent='❚❚';play.setAttribute('aria-label','Поставить голосовое на паузу');status.textContent='идёт воспроизведение';}).catch(()=>{status.textContent='не удалось воспроизвести аудио';}); }
-                else audio.pause();
-            });
-            audio.addEventListener('loadedmetadata',()=>duration.textContent=fmt(audio.duration));
-            audio.addEventListener('timeupdate',paint);
-            audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Продолжить голосовое');status.textContent='приостановлено';}});
-            audio.addEventListener('ended',()=>{play.textContent='↻';play.setAttribute('aria-label','Прослушать голосовое ещё раз');status.textContent='сообщение завершено';paint();if(unfinished) requestAnimationFrame(()=>unfinished.classList.add('visible'));});
-            bars.forEach((bar,idx)=>bar.addEventListener('click',()=>{if(audio.duration){audio.currentTime=audio.duration*(idx/bars.length);paint();}}));
-            audio.addEventListener('error',()=>status.textContent='не удалось загрузить audio/final.mp3');
-        }
 
         initFinalVoice(document);
 
