@@ -1,0 +1,15 @@
+{
+  "name": "Никто не вспомнит",
+  "short_name": "Nobody came",
+  "description": "Интерактивный литературный проект: тетралогия «Никто не вспомнит» и отдельные истории.",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08090d",
+  "theme_color": "#08090d",
+  "icons": [
+    {"src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

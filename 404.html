@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
   /* Запасной вид на случай, если style.css не подгрузится по относительному пути */
+  html{overflow-x:hidden}
   body{margin:0;background:#08090d;color:#ddd6cf;font-family:'EB Garamond',Georgia,serif}
   .nf{min-height:100vh;display:grid;place-content:center;gap:18px;padding:32px;text-align:center;position:relative;z-index:1}
   .nf b{font:600 clamp(64px,16vw,140px)/1 'Playfair Display',Georgia,serif;color:#c8a96e;opacity:.85}
@@ -21,6 +22,9 @@
   .nf a{justify-self:center;margin-top:10px;padding:12px 22px;border:1px solid rgba(200,169,110,.45);color:#c8a96e;text-decoration:none;font-size:17px}
   .nf a:hover,.nf a:focus-visible{background:rgba(200,169,110,.1);outline:none}
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 </head>
 <body class="home-v2">
 <div class="home-noise"></div>

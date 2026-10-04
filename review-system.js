@@ -12,11 +12,34 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 
   const config = window.NOBODY_SUPABASE_CONFIG;
-  let client = null;
-  if (window.supabase && config?.url && config?.publishableKey) {
-    client = window.supabase.createClient(config.url, config.publishableKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  const SUPABASE_SRC = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+
+  // Библиотека Supabase (~170 КБ) нужна только тем, кто долистал до отзывов или решил написать свой,
+  // поэтому подгружаем её лениво, а не на каждой странице при открытии книги.
+  let client = null, clientPromise = null;
+  function ensureClient(){
+    if (client) return Promise.resolve(client);
+    if (clientPromise) return clientPromise;
+    clientPromise = new Promise(resolve => {
+      const make = () => {
+        if (window.supabase && config?.url && config?.publishableKey) {
+          client = window.supabase.createClient(config.url, config.publishableKey, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+          });
+          if (window.NobodyReviews) window.NobodyReviews.client = client;
+        }
+        if (!client) clientPromise = null;      // при сбое можно будет повторить попытку
+        resolve(client);
+      };
+      if (window.supabase) return make();
+      const sc = document.createElement('script');
+      sc.src = SUPABASE_SRC;
+      sc.async = true;
+      sc.onload = make;
+      sc.onerror = () => { clientPromise = null; resolve(null); };
+      document.head.appendChild(sc);
     });
+    return clientPromise;
   }
 
   const total = r => CRITERIA.reduce((n,c)=>n+Number(r[c.key]||0),0);
@@ -78,6 +101,7 @@
   }
 
   async function loadPublished(root){
+    const client = await ensureClient();
     if(!client){
       render(root,[]);
       root.querySelector('[data-review-list]').innerHTML='<div class="review-empty">Система рецензий не подключена к базе данных.</div>';
@@ -100,6 +124,7 @@
   }
 
   async function submitReview(root,form){
+    const client = await ensureClient();
     if(!client){setMessage(form,'Система рецензий сейчас недоступна.',true);return;}
     const fd=new FormData(form);
     const text=String(fd.get('text')||'').trim();
@@ -149,18 +174,28 @@
 
   function init(root){
     const id=root.dataset.reviewBook;
-    if(!id) return;
+    if(!id || root.dataset.reviewReady) return;
+    root.dataset.reviewReady='1';
     const form=root.querySelector('[data-review-form]');
     root.querySelector('[data-review-open]').addEventListener('click',()=>{form.hidden=false;root.querySelector('[data-review-open]').hidden=true;form.scrollIntoView({behavior:'smooth',block:'center'});});
     root.querySelector('[data-review-cancel]').addEventListener('click',()=>{form.hidden=true;root.querySelector('[data-review-open]').hidden=false;});
     form.querySelectorAll('input[type=range]').forEach(el=>el.addEventListener('input',()=>updateTotal(form)));
     form.addEventListener('submit',e=>{e.preventDefault();submitReview(root,form);});
     updateTotal(form);
-    loadPublished(root);
+
+    // Отзывы грузим, когда блок почти попал в экран.
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries => {
+        if(entries.some(en => en.isIntersecting)){ io.disconnect(); loadPublished(root); }
+      }, {rootMargin:'900px 0px'});
+      io.observe(root);
+    }else{
+      loadPublished(root);
+    }
   }
 
   window.NobodyReviewsTemplate=function(o){ return reviewMarkup(o.id,o.title,o.accent); };
-  window.NobodyReviews={client,total,CRITERIA,MAX_TOTAL,refreshAll:()=>document.querySelectorAll('[data-review-book]').forEach(loadPublished)};
+  window.NobodyReviews={client,total,CRITERIA,MAX_TOTAL,mount:()=>mount(),refreshAll:()=>document.querySelectorAll('[data-review-book]').forEach(loadPublished)};
 
   function mount(){
     document.querySelectorAll('[data-review-book]').forEach(root=>{

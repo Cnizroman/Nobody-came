@@ -20,7 +20,7 @@
   if(!/\.html$/i.test(path)) path += '.html';   // GitHub Pages отдаёт и /book1, и /book1.html
 
   const isHome = document.body.classList.contains('home-v2');
-  const isReader = !isHome && path !== 'index.html' && path !== '404.html' && !!document.querySelector('main');
+  const isReader = !isHome && path !== 'index.html' && path !== '404.html' && !!document.querySelector('main, #locked-data');
 
   const bookKey = path.replace('.html','') || 'home';
   const progressKey = `nobody-progress-${bookKey}`;
@@ -488,7 +488,7 @@
 
   function setupReadingTime(){
     const kicker = $('.reader-kicker');
-    if(!kicker) return;
+    if(!kicker || kicker.querySelector('.reader-time')) return;
     const words = countWords();
     if(!words) return;
     readState.words = words;
@@ -555,7 +555,7 @@
   /* ---------- навигация по главам внизу ---------- */
   function setupChapterMarkers(){
     const main = $('main');
-    if(!main) return;
+    if(!main || main.querySelector('.chapter-nav')) return;
     const headings = [...main.querySelectorAll('h3,h4')];
     if(headings.length < 2) return;
 
@@ -770,7 +770,27 @@
     setupGhostSmoke();
     improvePassword();
     restoreProgress();
+
+    // Текст книги 3 появляется только после ввода пароля: достраиваем то, что зависит от текста.
+    document.addEventListener('nobody:content-ready', () => {
+      setupReadingTime();
+      setupChapterMarkers();
+      readState.saved = Number(store.get(progressKey, 0)) || 0;
+      readState.restoring = readState.saved >= 5;
+      readState.baseY = null;
+      if(readState.restoring) restoreProgress(); else finishRestore();
+    });
   }
+
+  /* ---------- офлайн-чтение ---------- */
+  // Service worker кеширует страницы после первого посещения: прочитанное открывается без сети.
+  function registerOffline(){
+    if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+  registerOffline();
 
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);
