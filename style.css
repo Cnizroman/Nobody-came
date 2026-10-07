@@ -1845,3 +1845,9 @@ main .quote::before{
   ::-webkit-scrollbar-thumb{background:rgba(200,169,110,.18);border:2px solid #08090d;border-radius:10px}
   ::-webkit-scrollbar-thumb:hover{background:rgba(200,169,110,.34)}
 }
+
+
+/* Пролог в новой навигации цикла */
+.path-stop-intro .path-step{color:#c8a96e}
+.path-stop-intro .path-mood{border-color:rgba(200,169,110,.16);color:#8c7a59}
+.path-stop-intro .path-dot{box-shadow:0 0 0 1px rgba(200,169,110,.28),0 0 14px rgba(200,169,110,.12)}
