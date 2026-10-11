@@ -676,7 +676,7 @@
       document.body.prepend(container);
     }
     if(container.children.length) return;
-    const count = window.innerWidth < 600 ? 10 : 18;
+    const count = window.innerWidth < 600 ? 7 : 18;
     const frag = document.createDocumentFragment();
     for(let i = 0; i < count; i++){
       const w = document.createElement('i');

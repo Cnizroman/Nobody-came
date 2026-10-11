@@ -611,6 +611,37 @@
     main.parentNode.insertBefore(note, main);
   }
 
+  /* Навигация «назад / дальше» в конце книги — как у книг 1, 2 и 4.
+     Текст третьей книги расшифровывается в браузере, поэтому в самой
+     странице такого блока нет: достраиваем его после ввода пароля. */
+  const BOOK_NAV = {
+    'theme-book3': [
+      ['book2.html', '← Спасательный круг'],
+      ['book4.html', '7 Дней →']
+    ]
+  };
+
+  function setupBookNav() {
+    const main = $('main');
+    if (!main || $('.book-nav-v2')) return;
+    let links = null;
+    for (const cls in BOOK_NAV) {
+      if (document.body.classList.contains(cls)) { links = BOOK_NAV[cls]; break; }
+    }
+    if (!links) return;
+
+    const nav = document.createElement('nav');
+    nav.className = 'book-nav-v2';
+    nav.setAttribute('aria-label', 'Навигация по циклу');
+    links.forEach(([href, label]) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.textContent = label;
+      nav.appendChild(a);
+    });
+    main.appendChild(nav);
+  }
+
   /* =======================================================================
      12. ОГЛАВЛЕНИЕ АРХИВА — подсвечиваем текущий раздел
      ======================================================================= */
@@ -649,6 +680,13 @@
         if (href && href === here) a.classList.add('active');
       });
     }
+    // На телефоне навигация прокручивается пальцем — показываем текущую страницу
+    const activeLink = nav && $('a.active', nav);
+    if (activeLink && nav.scrollWidth > nav.clientWidth) {
+      requestAnimationFrame(() => {
+        nav.scrollLeft = Math.max(0, activeLink.offsetLeft - (nav.clientWidth - activeLink.offsetWidth) / 2);
+      });
+    }
     // Плавные якорные переходы для оглавления
     $$('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
@@ -676,10 +714,18 @@
     setupCounters();
     setupArchiveSpy();
     setupReaderHero();
+    setupBookNav();
     setupReaderPolish();
     setupReveal();
     setupSpotlight();
     setupTilt();
+
+    // Книга 3 открывается паролем: шапка и навигация появляются вместе с текстом.
+    document.addEventListener('nobody:content-ready', () => {
+      setupReaderHero();
+      setupBookNav();
+      setupReaderPolish();
+    });
   }
 
   if (document.readyState === 'loading') {

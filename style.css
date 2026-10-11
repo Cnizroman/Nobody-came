@@ -1851,3 +1851,216 @@ main .quote::before{
 .path-stop-intro .path-step{color:#c8a96e}
 .path-stop-intro .path-mood{border-color:rgba(200,169,110,.16);color:#8c7a59}
 .path-stop-intro .path-dot{box-shadow:0 0 0 1px rgba(200,169,110,.28),0 0 14px rgba(200,169,110,.12)}
+
+
+/* Nobody Came 2.0 — enhanced reading pages */
+.reader-hero-v2{position:relative;margin:26px 0 34px;padding:24px 26px;border:1px solid rgba(200,169,110,.16);background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012));overflow:hidden;box-shadow:0 18px 55px rgba(0,0,0,.22)}
+.reader-hero-v2:before{content:'';position:absolute;left:-90px;top:-110px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(var(--reader-rgb,200,169,110),.12),transparent 68%);pointer-events:none}
+.reader-kicker{position:relative;display:flex;align-items:center;gap:10px;font:600 11px/1.3 'EB Garamond',serif;letter-spacing:.22em;text-transform:uppercase;color:var(--reader-accent,#c8a96e);margin-bottom:10px}
+.reader-kicker:before{content:'';width:28px;height:1px;background:currentColor;box-shadow:0 0 10px currentColor}
+.reader-lede{position:relative;margin:0;color:#85807b;font-size:14px;line-height:1.65;max-width:680px}
+.reader-badge{position:absolute;right:22px;top:17px;font:700 44px/1 'Playfair Display',serif;color:var(--reader-accent,#c8a96e);opacity:.14}
+.reader-note-v2{margin:18px 0 28px;padding:13px 16px;border-left:2px solid var(--reader-accent,#c8a96e);background:rgba(255,255,255,.018);color:#777;font-size:13px;line-height:1.65}
+.book-nav-v2{display:flex;justify-content:space-between;gap:12px;margin:38px 0 12px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)}
+.book-nav-v2 a{display:inline-flex;align-items:center;gap:9px;padding:11px 14px;border:1px solid rgba(255,255,255,.08);color:#aaa;text-decoration:none;transition:.22s ease;font-size:13px}
+.book-nav-v2 a:hover{color:#eee;border-color:var(--reader-accent,#c8a96e);transform:translateY(-2px)}
+.reader-footer-v2{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;color:#555!important;font-size:12px!important;margin-top:14px!important}
+@media(max-width:650px){.reader-hero-v2{padding:20px 17px;margin-top:18px}.reader-badge{right:14px;top:14px;font-size:34px}.book-nav-v2{flex-direction:column}.book-nav-v2 a{justify-content:center}.reader-note-v2{font-size:12px}}
+
+/* ============================================================
+   Единый вид страниц чтения (книги 1–4)
+   Раньше стили шапки/заметки/навигации лежали только внутри
+   book1.html и book2.html — в книгах 3 и 4 блоки, которые
+   вставляет visuals.js, оставались без оформления.
+   ============================================================ */
+.reader-hero-v2{border-color:rgba(var(--reader-rgb,200,169,110),.22);border-radius:2px}
+.reader-kicker .reader-time{color:#6d6862;font-weight:500;letter-spacing:.16em}
+.reader-note-v2{border-radius:0 2px 2px 0}
+.book-nav-v2 a:only-child{margin-left:auto}
+.book-nav-v2 a{flex:1 1 0;justify-content:center;text-align:center}
+.book-nav-v2 a:first-child:not(:only-child){justify-content:flex-start;text-align:left}
+.book-nav-v2 a:last-child:not(:only-child){justify-content:flex-end;text-align:right}
+.book-nav-v2 a:hover{background:rgba(var(--accent-rgb,200,169,110),.06)}
+.reader-footer-v2{margin-top:18px}
+
+/* Книга 4 — тот же ритм, что у книг 1–2, но в мятной палитре */
+.theme-book4 .reader-hero-v2{
+  border-color:rgba(111,255,214,.2);
+  background:linear-gradient(135deg,rgba(111,255,214,.06),rgba(111,255,214,.012));
+  box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 0 40px rgba(111,255,214,.025);
+}
+.theme-book4 .reader-lede{color:#7fa79c}
+.theme-book4 .reader-note-v2{background:rgba(111,255,214,.03);color:#5f8a7f}
+.theme-book4 .book-nav-v2{border-top-color:rgba(111,255,214,.14)}
+.theme-book4 .book-nav-v2 a{border-color:rgba(111,255,214,.14);color:#7fb5a6}
+.theme-book4 .book-nav-v2 a:hover{color:#e5fff8;border-color:rgba(111,255,214,.55)}
+
+/* Книга 3 — фиолетовая палитра */
+.theme-book3 .reader-hero-v2{
+  border-color:rgba(166,123,196,.24);
+  background:linear-gradient(135deg,rgba(166,123,196,.07),rgba(166,123,196,.012));
+  box-shadow:0 18px 55px rgba(0,0,0,.34),inset 0 0 40px rgba(166,123,196,.03);
+}
+.theme-book3 .reader-lede{color:#8f8498}
+.theme-book3 .reader-note-v2{background:rgba(166,123,196,.035);color:#7a6f84}
+.theme-book3 .book-nav-v2{border-top-color:rgba(166,123,196,.16)}
+.theme-book3 .book-nav-v2 a{border-color:rgba(166,123,196,.16);color:#a897b8}
+.theme-book3 .book-nav-v2 a:hover{color:#f0e6fa;border-color:rgba(196,151,229,.6)}
+
+/* «7 Дней»: текст начинается с коротких абзацев — буквица разваливала первую строку */
+.theme-book4 main.book4-story p:first-child::first-letter{
+  float:none;font-size:inherit;line-height:inherit;padding:0;color:inherit;
+}
+.theme-book4 main.book4-story > p:first-child{
+  font-size:1.18em;color:#e5fff8;letter-spacing:.01em;
+  text-shadow:0 0 22px rgba(111,255,214,.16);
+}
+
+.theme-book3 .reader-note-v2,.theme-book4 .reader-note-v2{border-left-color:rgba(var(--accent-rgb),.7)}
+.theme-book3 .reader-kicker,.theme-book4 .reader-kicker{color:var(--accent)}
+
+@media(max-width:650px){
+  .reader-kicker{flex-wrap:wrap;gap:4px 10px;padding-right:46px;letter-spacing:.14em}
+  .reader-badge{z-index:0}
+}
+
+
+/* ============================================================
+   MOBILE v3 — телефоны (≤640px)
+   Идея: меньше «шапки» до текста, нормальные зоны нажатия (≥44px),
+   никакого горизонтального качания, отступы под вырез/«домашнюю полоску».
+   ============================================================ */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+a,button,summary,label,input,select,textarea{touch-action:manipulation;-webkit-tap-highlight-color:rgba(var(--accent-rgb,200,169,110),.14)}
+body{overflow-x:clip}
+@supports (min-height:100dvh){body{min-height:100dvh}}
+
+@media(max-width:640px){
+  /* iOS не приближает страницу при фокусе в поле */
+  input,textarea,select{font-size:16px!important}
+
+  :root{--font-size:18px;--line-height:1.72}
+
+  /* ---------- страницы чтения ---------- */
+  .container{
+    width:calc(100% - 28px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+    padding:10px 0 calc(96px + env(safe-area-inset-bottom,0px));
+  }
+  header{padding:22px 0 10px;margin-bottom:8px}
+  header::after{margin-top:14px}
+  h1{font-size:clamp(34px,10.4vw,44px);line-height:1.02}
+  .subtitle{margin-top:8px;font-size:11.5px;letter-spacing:.15em;line-height:1.5}
+  .side-left,.side-right{display:none}
+
+  /* навигация — одна строка с горизонтальной прокруткой пальцем */
+  .top-nav{
+    flex-wrap:nowrap;gap:6px;margin:16px -14px 0;padding:2px 14px 6px;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-x:contain;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 26px),transparent 100%);
+            mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 26px),transparent 100%);
+  }
+  .top-nav::-webkit-scrollbar{display:none}
+  .top-nav a{
+    flex:0 0 auto;display:inline-flex;align-items:center;min-height:42px;
+    padding:0 14px;font-size:14px;white-space:nowrap;scroll-snap-align:center;
+    border-color:rgba(255,255,255,.07);
+  }
+
+  main{margin-top:14px}
+  main p{margin-bottom:1.15em;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+  main p:first-child::first-letter{font-size:3.3em;padding:6px 8px 0 0}
+  h3{margin:46px 0 18px;font-size:clamp(25px,7.4vw,31px)}
+  h4{margin:38px 0 16px}
+  .quote{padding:14px 15px;margin:22px 0}
+  .dialog{padding:14px 14px}
+  .divider{margin:34px 0}
+
+  /* шапка произведения — компактнее, чтобы текст начинался выше */
+  .reader-hero-v2{margin:12px 0 10px;padding:15px 15px 14px}
+  .reader-kicker{margin-bottom:8px;font-size:10.5px}
+  .reader-lede{font-size:13.5px;line-height:1.55}
+  .reader-badge{font-size:30px;right:12px;top:10px}
+  .reader-note-v2{margin:0 0 18px;padding:9px 12px;font-size:12px;line-height:1.5}
+
+  /* навигация по циклу — крупные кнопки одна под другой */
+  .book-nav-v2{flex-direction:column;gap:8px;margin-top:30px;padding-top:16px}
+  .book-nav-v2 a{flex:none!important;min-height:48px;padding:0 14px;justify-content:center!important;text-align:center!important}
+  .chapter-nav{margin-top:44px;padding-top:12px;gap:8px}
+  .chapter-nav a,.chapter-nav button{flex:1;min-height:48px;padding:0 10px;display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(255,255,255,.08);font-size:15px;text-align:center}
+
+  /* плавающие кнопки: меньше, ближе к краю, над «домашней полоской» */
+  .reader-tools{right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));gap:6px}
+  .reader-tools-toggle,.site-settings-toggle{width:44px!important;height:44px!important;opacity:.86}
+  .reader-tools-panel{width:min(86vw,290px)}
+  .site-settings{right:calc(10px + env(safe-area-inset-right,0px))!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
+  .back-top{left:calc(10px + env(safe-area-inset-left,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:44px;height:44px}
+  .mini-head{height:48px;padding-top:env(safe-area-inset-top,0px)}
+
+  /* пароль (книга 3 и скрытые страницы) */
+  .password-overlay{padding:16px;height:100vh}
+  @supports (height:100dvh){.password-overlay{height:100dvh}}
+  .password-box{width:100%;max-width:420px;padding:30px 20px 24px}
+  .password-box input,.password-box button#unlockBtn{min-height:50px}
+
+  /* рецензии */
+  .review-system{margin-top:34px}
+  .review-system button,.review-system .review-btn{min-height:46px}
+  .review-system textarea{min-height:130px}
+
+  footer{padding-bottom:6px}
+}
+
+/* ---------- главная и архив ---------- */
+@media(max-width:560px){
+  body.home-v2 .home-shell{padding-top:calc(3vh + env(safe-area-inset-top,0px))}
+  /* три плитки статистики в ряд вместо трёх длинных блоков */
+  .home-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:26px}
+  .home-stats>*{padding:14px 10px!important;min-width:0}
+  .home-stats strong,.home-stats b,.home-stats .home-stat-num{font-size:26px!important}
+  .home-stats span,.home-stats small,.home-stats .home-stat-label{font-size:9.5px!important;letter-spacing:.1em!important;line-height:1.35}
+
+  .story-card{min-height:0;grid-template-columns:30px 1fr 22px;gap:12px;padding:18px 16px}
+  .story-card h2{font-size:25px}
+  .story-card p{font-size:14px;margin-top:8px}
+  .archive-card{grid-template-columns:26px 1fr 20px;gap:10px;padding:16px 14px}
+  .archive-card strong{font-size:20px}
+
+  .home-actions a,.home-actions button{min-height:52px}
+  .path-stop a,.path-go{min-height:44px;display:inline-flex;align-items:center}
+}
+
+/* на телефоне нажимаем, а не наводим */
+@media(hover:none){
+  .story-card:hover,.archive-card:hover{transform:none}
+  .story-card:active,.archive-card:active,.book-nav-v2 a:active{transform:scale(.985);border-color:rgba(var(--accent-rgb,200,169,110),.45)}
+}
+
+/* очень узкие экраны (iPhone SE, 320–360px) */
+@media(max-width:360px){
+  :root{--font-size:17px}
+  h1{font-size:32px}
+  .top-nav a{padding:0 11px;font-size:13px}
+  .reader-hero-v2{padding:13px}
+}
+
+/* ландшафт на телефоне: не занимаем пол-экрана шапкой */
+@media(max-height:480px) and (orientation:landscape){
+  header{padding-top:12px}
+  .subtitle{display:none}
+  .reader-hero-v2,.reader-note-v2{display:none}
+  .reader-tools-toggle,.site-settings-toggle{width:38px!important;height:38px!important}
+}
+@media(max-width:640px){
+  .chapter-nav button{background:rgba(255,255,255,.02);color:#9a948d;cursor:pointer}
+  .chapter-nav button:active{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+}
+html{overflow-x:clip}
+.home-compass,.home-orb,.home-noise{max-width:100vw}
+@media(max-width:640px){
+  /* две круглые кнопки друг над другом, а не друг на друге */
+  .reader-tools + .site-settings{bottom:calc(62px + env(safe-area-inset-bottom,0px))!important}
+  body.home-v2 .site-settings{bottom:calc(14px + env(safe-area-inset-bottom,0px))!important}
+  .reader-kicker{letter-spacing:.12em}
+}
