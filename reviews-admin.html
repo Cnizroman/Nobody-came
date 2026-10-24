@@ -24,7 +24,7 @@ body.review-admin{background:#08090d;color:#aaa;min-height:100vh}.review-admin-w
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="supabase-config.js"></script>
 <script>
-const BOOKS=[['book1','Дорога из Холода'],['book2','Спасательный круг'],['book3','Там, где нас нет'],['book4','7 Дней'],['belaya-golova','Белая голова']];
+const BOOKS=[['book1','Дорога из Холода'],['book2','Спасательный круг'],['book3','Где нас нет'],['book4','7 Дней'],['belaya-golova','Белая голова']];
 const CRITERIA=[['plot','СЮЖЕТ',5],['characters','ПЕРСОНАЖИ',4],['atmosphere','АТМОСФЕРА',4],['style','ЯЗЫК И СТИЛЬ',4],['emotion','ЭМОЦИОНАЛЬНОЕ ВОЗДЕЙСТВИЕ',4]];
 const cfg=window.NOBODY_SUPABASE_CONFIG;
 if(!window.supabase||!cfg){document.body.insertAdjacentHTML('afterbegin','<p style="padding:24px;color:#d88f8f;font:16px/1.5 sans-serif">Не удалось загрузить Supabase (нет сети или CDN заблокирован). Обновите страницу.</p>');throw new Error('Supabase SDK not loaded');}

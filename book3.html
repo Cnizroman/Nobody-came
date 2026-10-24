@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Там, где нас нет · Никто не вспомнит</title>
+    <title>Где нас нет · Никто не вспомнит</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
@@ -12,10 +12,10 @@
 <meta property="og:site_name" content="Никто не вспомнит">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:title" content="Там, где нас нет · Никто не вспомнит">
+<meta property="og:title" content="Где нас нет · Никто не вспомнит">
 <meta name="twitter:card" content="summary_large_image">
-<meta property="og:description" content="Там, где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
-<meta name="description" content="Там, где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
+<meta property="og:description" content="Где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
+<meta name="description" content="Где нас нет — третья книга тетралогии «Никто не вспомнит». Самая длинная и самая личная запись.">
 <meta name="theme-color" content="#06070d">
 <link rel="stylesheet" href="style.css" />
 <script src="visuals.js" defer></script>
@@ -79,14 +79,14 @@
 </head>
 <body class="theme-book3">
 <a class="skip-link" href="#content">К тексту</a>
-    <div class="side-left" aria-hidden="true"><span class="side-title">Там, где нас нет</span></div>
+    <div class="side-left" aria-hidden="true"><span class="side-title">Где нас нет</span></div>
     <div class="side-right" aria-hidden="true"><span class="side-title">Книга третья</span></div>
 
     <div class="password-overlay" id="passwordOverlay" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
         <div class="password-box" id="passwordBox">
             <button class="close-btn" id="closePasswordBtn" aria-label="Закрыть">✕</button>
             <div class="password-mark" aria-hidden="true">III</div>
-            <h2 id="passwordTitle">Там, где нас нет</h2>
+            <h2 id="passwordTitle">Где нас нет</h2>
             <p class="sub">Введите слово, чтобы открыть третью книгу</p>
             <input type="password" id="passwordInput" aria-label="Пароль" placeholder="Введите пароль" autocomplete="off" autofocus />
             <div class="error" id="errorMsg" role="alert"></div>
@@ -142,6 +142,10 @@
             }
 
             function open(html) {
+                // Normalize title and final-audio asset in the decrypted book body.
+                html = html
+                    .replace(/Там,?\s*где нас нет/gi, 'Где нас нет')
+                    .replace(/final-voice\.mp3/gi, 'final-voice-with-shot-balanced-2.mp3');
                 body.innerHTML = html;
                 o.classList.add('hidden');
                 c.classList.add('visible');

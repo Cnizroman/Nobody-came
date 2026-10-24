@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Там, где нас нет · Трилогия</title>
+    <title>Где нас нет · Трилогия</title>
     <link rel="stylesheet" href="style.css" />
     <style>
         /* Финальное оформление окна пароля третьей книги */
@@ -56,14 +56,14 @@
 </style>
 </head>
 <body class="theme-book3">
-    <div class="side-left"><span class="side-title">Там, где нас нет</span></div>
+    <div class="side-left"><span class="side-title">Где нас нет</span></div>
     <div class="side-right"><span class="side-title">Книга третья</span></div>
 
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-box" id="passwordBox">
             <button class="close-btn" id="closePasswordBtn" aria-label="Закрыть">✕</button>
             <div class="password-mark" aria-hidden="true">III</div>
-            <h2>Там, где нас нет</h2>
+            <h2>Где нас нет</h2>
             <p class="sub">Введите слово, чтобы открыть третью книгу</p>
             <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="off" autofocus />
             <div class="error" id="errorMsg"></div>
@@ -83,7 +83,7 @@
                     <a href="intro.html">Не с начала...</a>
                     <a href="book1.html">Дорога из Холода</a>
                     <a href="book2.html">Спасательный круг</a>
-                    <a href="book3.html" class="active">Там, где нас нет</a>
+                    <a href="book3.html" class="active">Где нас нет</a>
                     <a href="book4.html">7 Дней</a>
                 </nav>
             </header>
@@ -270,7 +270,7 @@
                             </div>
                         </div>
                         <audio class="final-voice-audio" preload="metadata">
-                            <source src="final-voice.mp3" type="audio/mpeg">
+                            <source src="final-voice-with-shot-balanced-2.mp3" type="audio/mpeg">
                         </audio>
                         <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
                     </div>
@@ -307,7 +307,7 @@
                     <a href="intro.html">Не с начала...</a>
                     <a href="book1.html">Дорога из Холода</a>
                     <a href="book2.html">Спасательный круг</a>
-                    <a href="book3.html" class="active">Там, где нас нет</a>
+                    <a href="book3.html" class="active">Где нас нет</a>
                 </nav>
             </header>
 
@@ -493,7 +493,7 @@
                             </div>
                         </div>
                         <audio class="final-voice-audio" preload="metadata">
-                            <source src="final-voice.mp3" type="audio/mpeg">
+                            <source src="final-voice-with-shot-balanced-2.mp3" type="audio/mpeg">
                         </audio>
                         <div class="final-voice-status" aria-live="polite">нажмите, чтобы прослушать</div>
                     </div>
@@ -616,7 +616,7 @@
             audio.addEventListener('pause',()=>{if(!audio.ended){play.textContent='▶';play.setAttribute('aria-label','Продолжить голосовое');status.textContent='приостановлено';}});
             audio.addEventListener('ended',()=>{play.textContent='↻';play.setAttribute('aria-label','Прослушать голосовое ещё раз');status.textContent='сообщение завершено';paint();if(unfinished) requestAnimationFrame(()=>unfinished.classList.add('visible'));});
             bars.forEach((bar,idx)=>bar.addEventListener('click',()=>{if(audio.duration){audio.currentTime=audio.duration*(idx/bars.length);paint();}}));
-            audio.addEventListener('error',()=>status.textContent='добавьте файл final-voice.mp3 в папку сайта');
+            audio.addEventListener('error',()=>status.textContent='добавьте файл final-voice-with-shot-balanced-2.mp3 в папку сайта');
         }
 
         initFinalVoice(document);
