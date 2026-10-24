@@ -184,137 +184,6 @@
     b.addEventListener('click', () => window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'}));
   }
 
-  /* ---------- безопасный режим ---------- */
-  const SAFE_KEY = 'nobody-safe-mode';
-
-  // Раньше слова менялись по подстрокам: «требуют» превращалось в «трдостаюют»,
-  // «заебали» — в «задосталии», «блять» — в «чёрттть». Теперь правила применяются
-  // к целым словам (ё нормализуется в е), а регистр исходного слова сохраняется.
-  const ADJ = 'ая|ый|ое|ые|ого|ому|ым|ой|ую|ых|ыми|ом';
-
-  const SAFE_RULES = [
-    [/^бля(?:ть|дь)$|^бля$/, 'чёрт'],
-    [/^блядск(ий|ая|ое|ие)$/, m => ({'ий':'проклятый','ая':'проклятая','ое':'проклятое','ие':'проклятые'}[m[1]])],
-
-    [new RegExp(`^ебан{1,2}(${ADJ})$`), m => 'проклят' + m[1]],
-    [/^ебануться$|^ебнуться$/, 'с ума сойти'],
-
-    [/^заебись$/, 'отлично'],
-    [/^заеба(л|ла|ли|ло)$/, m => ({'л':'достал','ла':'достала','ли':'достали','ло':'достало'}[m[1]])],
-    [/^заеба(лся|лась|лось|лись)$/, m => ({'лся':'устал','лась':'устала','лось':'устало','лись':'устали'}[m[1]])],
-    [/^заеб(ывать|ывал|ывала|ывали|ывало|ывает|ывают)$/, m => 'раздражать'.replace(/ать$/, '') + ({'ывать':'ать','ывал':'ал','ывала':'ала','ывали':'али','ывало':'ало','ывает':'ает','ывают':'ают'}[m[1]])],
-
-    [/^ебу$/, 'достаю'], [/^ебешь$/, 'достаёшь'], [/^ебет$/, 'волнует'], [/^ебут$/, 'достают'],
-    [/^ебать$/, 'чёрт'], [/^ебись$/, 'отстань'],
-    [/^ебал(а|о|и)?$/, m => 'достал' + (m[1] || '')],
-
-    [/^мразь$/, 'мерзость'], [/^мрази$/, 'мерзавцы'], [/^мразей$/, 'мерзавцев'], [/^мразью$/, 'мерзостью'],
-    [/^мраза$/, 'мерзавца'],
-    [/^мразьты$/, 'мерзость Ты'],   // опечатка в тексте: «мразьТы» без пробела
-
-    [/^муда(к|ка|ку|ком|ке|ки|ков|кам|ками|ках)$/, m => 'дурак' .slice(0,-1) + 'к' + m[1].slice(1)],
-    [/^мудацк(ий|ая|ое|ие|ого|ому|им|ой|ую|их|ими|ом)$/, m => 'дурацк' + m[1]],
-    [/^мудила$|^мудило$/, 'дурак'],
-    [/^мудачка$/, 'дура'],
-
-    [/^пиздец$/, 'кошмар'],
-    [/^пиздеж$/, 'бред'],
-    [/^пиздато$/, 'отлично'],
-    [/^пиздатейш(ий|ая|ее|ие)$/, m => ({'ий':'лучший','ая':'лучшая','ее':'лучшее','ие':'лучшие'}[m[1]])],
-    [new RegExp(`^пиздат(${ADJ})$`), m => m[1] === 'ый' ? 'крутой' : (m[1] === 'ой' ? 'крутой' : 'крут' + m[1])],
-    [/^пиздел(а|и|о)?$/, m => 'врал' + (m[1] || '')],
-    [/^спиздел(а|и|о)?$/, m => 'соврал' + (m[1] || '')],
-    [/^пиздеть$|^пиздить$/, 'врать'], [/^пиздят$/, 'врут'], [/^пиздит$/, 'врёт'], [/^пиздишь$/, 'врёшь'],
-    [/^пиздюл(?:ей|и|ями)$/, 'наказания'],
-
-    [/^похуй$/, 'пофиг'], [/^похуист(а|у|ом|ы|ов)?$/, m => 'пофигист' + (m[1] || '')],
-    [/^нахуй$/, 'зачем'], [/^нахрен$/, 'зачем'],
-    [/^хуйня$/, 'ерунда'], [/^хуйню$/, 'ерунду'], [/^хуйней$/, 'ерундой'], [/^хуйне$/, 'ерунде'], [/^хуйни$/, 'ерунды'],
-    [/^хуй$/, 'чёрт'], [/^хуя$/, 'ничего'], [/^хуем$/, 'ничем'], [/^хуле$/, 'зачем'],
-
-    [/^сука$/, 'чёрт'], [/^сучка$/, 'мерзавка'],
-    [/^говно$/, 'грязь'], [/^говняный$/, 'отвратительный'], [/^дерьмо$/, 'ерунда'],
-    [/^дроч\p{L}*$/u, 'баловство']
-  ];
-
-  // Быстрый предфильтр: токенизируем только узлы, где вообще есть повод.
-  const SAFE_HINT = /бл[яе]|[её]б|муд|пизд|хуй|хуя|хуе|хуи|хуле|похуй|нахуй|нахрен|сук|говн|дерьм|дроч|мраз/i;
-
-  function isSafeMode(){
-    // Безопасный режим включён по умолчанию при первом посещении.
-    const saved = store.get(SAFE_KEY);
-    if(saved === null){ store.set(SAFE_KEY,'1'); return true; }
-    return saved === '1';
-  }
-
-  function matchCase(orig, repl){
-    if(orig.length > 1 && orig === orig.toUpperCase()) return repl.toUpperCase();
-    if(orig[0] !== orig[0].toLowerCase()) return repl[0].toUpperCase() + repl.slice(1);
-    return repl;
-  }
-
-  function maskWord(word){
-    const norm = word.toLowerCase().replace(/ё/g,'е');
-    for(const [re, rep] of SAFE_RULES){
-      const m = norm.match(re);
-      if(m) return matchCase(word, typeof rep === 'function' ? rep(m) : rep);
-    }
-    return word;
-  }
-
-  function replaceProfanityInText(text){
-    if(!SAFE_HINT.test(text)) return text;
-    // «ебу/ебёт/ебут мозг» → «выношу/выносит/выносят мозг»
-    text = text.replace(/(^|[^\p{L}])(еб(?:у|[её]т|ут))(?=\s+мозг)/giu, (m, pre, w) => {
-      const n = w.toLowerCase().replace(/ё/g,'е');
-      const rep = n === 'ебу' ? 'выношу' : (n === 'ебут' ? 'выносят' : 'выносит');
-      return pre + matchCase(w, rep);
-    });
-    return text.replace(/\p{L}+/gu, maskWord);
-  }
-
-  function maskTextNode(node){
-    if(!node.nodeValue || !node.nodeValue.trim()) return;
-    const next = replaceProfanityInText(node.nodeValue);
-    if(next !== node.nodeValue) node.nodeValue = next;
-  }
-
-  function maskTree(root){
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode(node){
-        const p = node.parentElement;
-        if(!p || ['SCRIPT','STYLE','INPUT','TEXTAREA','NOSCRIPT'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    const nodes = []; let n;
-    while((n = walker.nextNode())) nodes.push(n);
-    nodes.forEach(maskTextNode);
-  }
-
-  function applySafeMode(){
-    const on = isSafeMode();
-    document.body.classList.toggle('safe-mode', on);
-    if(!on) return;
-    maskTree(document.body);
-
-    // Контент, который появляется позже (текст после ввода пароля, отзывы читателей),
-    // тоже должен проходить через фильтр.
-    if('MutationObserver' in window){
-      new MutationObserver(records => {
-        for(const r of records){
-          r.addedNodes.forEach(node => {
-            if(node.nodeType === Node.TEXT_NODE){
-              if(node.parentElement && !['SCRIPT','STYLE','TEXTAREA'].includes(node.parentElement.tagName)) maskTextNode(node);
-            }else if(node.nodeType === Node.ELEMENT_NODE && node.textContent && SAFE_HINT.test(node.textContent)){
-              maskTree(node);
-            }
-          });
-        }
-      }).observe(document.body, {childList:true, subtree:true});
-    }
-  }
-
   /* ---------- закрытие панелей ---------- */
   const panels = [];   // {wrap, close}
   function registerPanel(wrap, toggle, panel){
@@ -345,40 +214,6 @@
   document.addEventListener('click', e => {
     panels.forEach(p => { if(p.wrap.classList.contains('open') && !p.wrap.contains(e.target)) p.close(); });
   });
-
-  function setupSettings(){
-    const wrap = document.createElement('div');
-    wrap.className = 'site-settings';
-    const iconMap = {
-      'theme-book1':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg>',
-      'theme-book2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2"/></svg>',
-      'theme-book3':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z"/></svg>',
-      'theme-book4':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 5v14M5 12h14M12 12l4-4"/></svg>',
-      'theme-belaya':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.1 9l5.9 3-5.9 3L12 21.2 9.9 15 4 12l5.9-3L12 2.8Z"/><path d="M12 7.5v9M7.5 12h9"/></svg>',
-      'home-v2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M8 12h8M12 8v8"/></svg>',
-      'secret-page':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 12h8M12 8v8"/></svg>'
-    };
-    const themeClass = ['theme-book1','theme-book2','theme-book3','theme-book4','theme-belaya','theme-intro','home-v2','secret-page'].find(c => document.body.classList.contains(c));
-    const icon = iconMap[themeClass] || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 5v5l3 2"/></svg>';
-    wrap.innerHTML = `
-      <button type="button" class="site-settings-toggle" aria-label="Настройки сайта" title="Настройки" aria-expanded="false" aria-controls="siteSettingsPanel">${icon}</button>
-      <div class="site-settings-panel" id="siteSettingsPanel" aria-hidden="true" role="group" aria-label="Настройки сайта">
-        <div class="site-settings-title">Настройки</div>
-        <label class="safe-toggle"><span><strong>Безопасный режим</strong><small>Скрывает нецензурную лексику</small></span><input type="checkbox" id="safeModeToggle"><i></i></label>
-      </div>`;
-    document.body.appendChild(wrap);
-    const panel = wrap.querySelector('.site-settings-panel');
-    const toggle = wrap.querySelector('.site-settings-toggle');
-    const checkbox = wrap.querySelector('#safeModeToggle');
-    const ctl = registerPanel(wrap, toggle, panel);
-    checkbox.checked = isSafeMode();
-    toggle.addEventListener('click', () => ctl.isOpen() ? ctl.close() : ctl.open());
-    checkbox.addEventListener('change', () => {
-      store.set(SAFE_KEY, checkbox.checked ? '1' : '0');
-      location.reload();
-    });
-    applySafeMode();
-  }
 
   /* ---------- главы ---------- */
   function getChapters(){
@@ -751,12 +586,8 @@
       saveLastPage();
       setupProgress();
       setupBackTop();
-      // Панель чтения должна идти в DOM ПЕРЕД кнопкой настроек сайта:
-      // на этом порядке держится CSS-правило `.reader-tools + .site-settings`,
-      // которое разводит две круглые кнопки (раньше они лежали друг на друге).
       setupTools();
     }
-    setupSettings();
     if(!isReader){
       setupHome();
       return;

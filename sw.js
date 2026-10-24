@@ -2,7 +2,7 @@
    Стратегия «сначала сеть, потом кеш»: пока сайт онлайн, читатель всегда получает свежую версию
    (новые главы не залипают в кеше), а без сети открываются уже посещённые страницы.
    Чтобы сбросить кеш у всех, увеличь номер в CACHE. */
-const CACHE = 'nobody-v2';
+const CACHE = 'nobody-v3';
 const CORE = ['./', 'index.html', 'style.css', 'script.js', 'visuals.js', 'manifest.webmanifest'];
 
 self.addEventListener('install', event => {

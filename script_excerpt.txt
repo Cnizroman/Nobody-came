@@ -54,100 +54,6 @@
     b.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
   }
 
-  const SAFE_KEY = 'nobody-safe-mode';
-
-  // В безопасном режиме нецензурные слова заменяются не символами,
-  // а естественными по смыслу словами/фразами.
-  const safeReplacements = [
-    [/заебал/giu, 'достал'], [/заебалась/giu, 'устала'], [/заебался/giu, 'устал'], [/заебало/giu, 'достало'],
-    [/заебись/giu, 'отлично'],
-    [/пиздец/giu, 'кошмар'], [/пизд[её]ж/giu, 'бред'], [/пиздеть/giu, 'врать'], [/пиздят/giu, 'врут'], [/пиздит/giu, 'врёт'], [/пиздишь/giu, 'врёшь'], [/пиздить/giu, 'врать'], [/пиздюлей/giu, 'наказания'], [/пиздецкий/giu, 'жуткий'], [/пиздато/giu, 'отлично'],
-    [/мразь/giu, 'мерзкий человек'], [/мраза/giu, 'мерзавца'],
-    [/мудацк(?:ий|ая|ое|ие)/giu, m => ({'мудацкий':'дурацкий','мудацкая':'дурацкая','мудацкое':'дурацкое','мудацкие':'дурацкие'}[m.toLowerCase()]||'дурацкий')],
-    [/мудак/giu, 'дурак'], [/мудачка/giu, 'дура'], [/мудило/giu, 'дурак'],
-    [/похуй/giu, 'всё равно'], [/нахуй/giu, 'зачем'], [/нахрен/giu, 'зачем'],
-    [/хуйня/giu, 'ерунда'], [/хуйн(?:я|ю|ей|е|и)/giu, 'ерундой'], [/хуй/giu, 'чёрт'], [/хуя/giu, 'ничего'], [/хуем/giu, 'ничем'], [/хуле/giu, 'зачем'],
-    [/блядь/giu, 'чёрт'], [/бля/giu, 'чёрт'], [/блядский/giu, 'проклятый'], [/сука/giu, 'чёрт'], [/сучка/giu, 'мерзавка'],
-    [/ебан(?:ая|ая|ый|ое|ые|ная|ный|ное|ные)/giu, 'проклятый'], [/ебануться/giu, 'с ума сойти'], [/ебнуться/giu, 'с ума сойти'],
-    [/ебать/giu, 'чёрт'], [/еб[её]т/giu, 'волнует'], [/ебу/giu, 'достаю'], [/еб[её]шь/giu, 'достаёшь'], [/ебись/giu, 'отстань'], [/ебал/giu, 'достал'], [/ебала/giu, 'достала'], [/ебало/giu, 'достало'],
-    [/говно/giu, 'грязь'], [/говняный/giu, 'отвратительный'], [/дерьмо/giu, 'ерунда'], [/дроч\p{L}*/giu, 'баловство']
-  ];
-
-
-
-  function isSafeMode(){
-    // Безопасный режим включён по умолчанию при первом посещении.
-    const saved=localStorage.getItem(SAFE_KEY);
-    if(saved===null){ localStorage.setItem(SAFE_KEY,'1'); return true; }
-    return saved==='1';
-  }
-
-  function replaceProfanityInText(text){
-    for(const [re,replacement] of safeReplacements){
-      re.lastIndex=0;
-      text=text.replace(re,replacement);
-    }
-    // Несколько фраз лучше звучат целиком, чем при пословной замене.
-    text=text.replace(/достал\s+этот\s+бред/gi, 'надоел этот бред');
-    text=text.replace(/я\s+сам\s+себе\s+достаю\s+мозг/gi, 'я сам себя мучаю');
-    return text;
-  }
-
-  function maskTextNode(node){
-    if(!node.nodeValue || !node.nodeValue.trim()) return;
-    node.nodeValue=replaceProfanityInText(node.nodeValue);
-  }
-
-
-  function applySafeMode(){
-    document.body.classList.toggle('safe-mode', isSafeMode());
-    if(!isSafeMode()) return;
-    const walker=document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-      acceptNode(node){
-        const p=node.parentElement;
-        if(!p || ['SCRIPT','STYLE','INPUT','TEXTAREA'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    const nodes=[]; let n;
-    while((n=walker.nextNode())) nodes.push(n);
-    nodes.forEach(maskTextNode);
-  }
-
-  function setupSettings(){
-    const wrap=document.createElement('div');
-    wrap.className='site-settings';
-    const iconMap={
-      'theme-book1':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg>',
-      'theme-book2':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2"/></svg>',
-      'theme-book3':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z"/></svg>',
-      'theme-book4':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 5v14M5 12h14M12 12l4-4"/></svg>',
-      'theme-belaya':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.1 9l5.9 3-5.9 3L12 21.2 9.9 15 4 12l5.9-3L12 2.8Z"/><path d="M12 7.5v9M7.5 12h9"/></svg>'
-    };
-    const themeClass=['theme-book1','theme-book2','theme-book3','theme-book4','theme-belaya'].find(c=>document.body.classList.contains(c));
-    const icon=iconMap[themeClass] || '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 5v5l3 2"/></svg>';
-    wrap.innerHTML=`
-      <button class="site-settings-toggle" aria-label="Настройки" title="Настройки">${icon}</button>
-      <div class="site-settings-panel" aria-hidden="true">
-        <div class="site-settings-title">Настройки</div>
-        <label class="safe-toggle"><span><strong>Безопасный режим</strong><small>Скрывает нецензурную лексику</small></span><input type="checkbox" id="safeModeToggle"><i></i></label>
-      </div>`;
-    document.body.appendChild(wrap);
-    const panel=wrap.querySelector('.site-settings-panel');
-    const toggle=wrap.querySelector('.site-settings-toggle');
-    const checkbox=wrap.querySelector('#safeModeToggle');
-    checkbox.checked=isSafeMode();
-    toggle.addEventListener('click',()=>{
-      wrap.classList.toggle('open');
-      panel.setAttribute('aria-hidden',String(!wrap.classList.contains('open')));
-    });
-    checkbox.addEventListener('change',()=>{
-      localStorage.setItem(SAFE_KEY, checkbox.checked?'1':'0');
-      location.reload();
-    });
-    applySafeMode();
-  }
-
   function setupTools(){
     const wrap=document.createElement('div');
     wrap.className='reader-tools';
@@ -411,7 +317,6 @@
   }
 
   function init(){
-    setupSettings();
     if(!isReader){
       setupHome();
       return;
