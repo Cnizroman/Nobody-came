@@ -541,19 +541,89 @@
 
   /* ---------- главная ---------- */
   function setupHome(){
-    // Secret entrance: type the code word directly on the main screen.
+    // Secret doors: typing a word opens the corresponding hidden page.
+    // "конец" remains the first secret; "осознание" opens the second one.
     let secretBuffer = '';
-    const secretWord = 'конец';
+    let secretRedirecting = false;
+    const secretRoutes = [
+      { word: 'конец', url: 'secret.html' },
+      { word: 'осознание', url: 'secret2.html' }
+    ];
+    const goToSecret = (url) => {
+      if(secretRedirecting) return;
+      secretRedirecting = true;
+      const overlay = $('#secretEntryOverlay');
+      if(overlay) overlay.hidden = true;
+      document.body.classList.add('void-transition');
+      setTimeout(() => { location.href = url; }, reduceMotion ? 80 : 1550);
+    };
     window.addEventListener('keydown', e => {
       if(e.ctrlKey || e.altKey || e.metaKey) return;
-      const ch = (e.key || '').toLowerCase();
+      if(e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const ch = (e.key || '').toLocaleLowerCase('ru-RU');
       if(ch.length !== 1 || !/[а-яё]/i.test(ch)) return;
-      secretBuffer = (secretBuffer + ch).slice(-secretWord.length);
-      if(secretBuffer === secretWord){
-        document.body.classList.add('void-transition');
-        setTimeout(() => { location.href = 'secret.html'; }, reduceMotion ? 300 : 1550);
-      }
+      secretBuffer = (secretBuffer + ch).slice(-Math.max(...secretRoutes.map(route => route.word.length)));
+      const matched = secretRoutes.find(route => secretBuffer.endsWith(route.word));
+      if(matched) goToSecret(matched.url);
     });
+
+    // Mobile entrance: hold the homepage title, then enter the same keyword.
+    // A hold is used instead of a visible link so the secret does not appear in navigation.
+    const secretTrigger = $('#homeSecretTrigger');
+    const secretOverlay = $('#secretEntryOverlay');
+    const secretForm = $('#secretEntryForm');
+    const secretInput = $('#secretEntryInput');
+    const secretMessage = $('#secretEntryMessage');
+    const secretClose = $('#secretEntryClose');
+    if(secretTrigger && secretOverlay && secretForm && secretInput){
+      let holdTimer = null;
+      let holdStart = null;
+      const openSecretPrompt = () => {
+        secretOverlay.hidden = false;
+        if(secretMessage) secretMessage.textContent = '';
+        window.setTimeout(() => secretInput.focus({preventScroll:true}), 60);
+      };
+      const cancelHold = () => {
+        if(holdTimer !== null) window.clearTimeout(holdTimer);
+        holdTimer = null;
+        holdStart = null;
+      };
+      secretTrigger.addEventListener('pointerdown', e => {
+        if(e.pointerType !== 'touch' && !window.matchMedia('(max-width: 700px)').matches) return;
+        cancelHold();
+        holdStart = { x: e.clientX, y: e.clientY };
+        holdTimer = window.setTimeout(() => {
+          holdTimer = null;
+          openSecretPrompt();
+        }, 850);
+      }, {passive:true});
+      secretTrigger.addEventListener('pointermove', e => {
+        if(!holdStart || holdTimer === null) return;
+        if(Math.abs(e.clientX - holdStart.x) > 12 || Math.abs(e.clientY - holdStart.y) > 12) cancelHold();
+      }, {passive:true});
+      ['pointerup','pointercancel','pointerleave'].forEach(name => secretTrigger.addEventListener(name, cancelHold, {passive:true}));
+      secretTrigger.addEventListener('contextmenu', e => e.preventDefault());
+
+      const closeSecretPrompt = () => {
+        secretOverlay.hidden = true;
+        secretTrigger.focus({preventScroll:true});
+      };
+      secretClose?.addEventListener('click', closeSecretPrompt);
+      secretOverlay.addEventListener('click', e => { if(e.target === secretOverlay) closeSecretPrompt(); });
+      document.addEventListener('keydown', e => {
+        if(e.key === 'Escape' && !secretOverlay.hidden) closeSecretPrompt();
+      });
+      secretForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const key = secretInput.value.trim().toLocaleLowerCase('ru-RU').replace(/[\s\u200b]+/g, '');
+        if(key === 'осознание'){
+          goToSecret('secret2.html');
+        }else{
+          if(secretMessage) secretMessage.textContent = 'Это слово ничего не открыло.';
+          secretInput.select();
+        }
+      });
+    }
 
     const btn = $('#continueBtn');
     const last = store.get(lastKey);

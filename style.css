@@ -1969,3 +1969,40 @@ html{overflow-x:clip}
 @media(max-width:640px){
   .reader-kicker{letter-spacing:.12em}
 }
+
+
+/* ---------- Hidden second-secret entry (homepage/mobile) ---------- */
+.secret-entry-overlay[hidden]{display:none!important}
+.secret-entry-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(2,0,3,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.secret-entry-panel{position:relative;width:min(430px,100%);padding:34px 27px 28px;border:1px solid rgba(190,36,59,.38);background:radial-gradient(circle at 50% 0,rgba(115,8,29,.18),transparent 54%),linear-gradient(155deg,#10070b,#050406 74%);box-shadow:0 24px 90px rgba(0,0,0,.6),0 0 38px rgba(190,26,56,.07);color:#d5c9cc}
+.secret-entry-close{position:absolute;top:10px;right:12px;width:34px;height:34px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#9b858b;font-size:24px;line-height:1;cursor:pointer}
+.secret-entry-kicker{margin:0 0 13px;color:#b82b45;font:11px/1.4 'EB Garamond',serif;letter-spacing:.28em;text-align:center}
+.secret-entry-panel h2{margin:0;color:#eee3e6;text-align:center;font:500 27px/1.16 'Playfair Display',serif}
+.secret-entry-hint{margin:12px 0 22px;text-align:center;color:#8a777d;font:italic 16px/1.5 'EB Garamond',serif}
+.secret-entry-panel label{display:block;margin-bottom:7px;color:#b39ca2;font:13px/1.4 'EB Garamond',serif;letter-spacing:.08em}
+.secret-entry-panel input{box-sizing:border-box;width:100%;min-height:47px;padding:11px 13px;border:1px solid rgba(190,36,59,.32);border-radius:0;outline:none;background:#080608;color:#f2dfe3;font:18px 'EB Garamond',serif;letter-spacing:.04em}
+.secret-entry-panel input:focus{border-color:#c3314d;box-shadow:0 0 0 2px rgba(195,49,77,.13)}
+.secret-entry-message{min-height:18px;margin:7px 0 12px;color:#e15b6e;font:13px/1.4 'EB Garamond',serif}
+.secret-entry-submit{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;min-height:47px;padding:12px 14px;border:1px solid rgba(200,45,71,.42);background:rgba(151,15,39,.12);color:#e2c5ca;text-align:left;font:14px 'EB Garamond',serif;letter-spacing:.04em;cursor:pointer;transition:background .2s,border-color .2s}
+.secret-entry-submit:hover{border-color:rgba(235,58,85,.72);background:rgba(151,15,39,.22)}
+#homeSecretTrigger{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+@media(max-width:560px){.secret-entry-overlay{padding:14px}.secret-entry-panel{padding:32px 20px 22px}.secret-entry-panel h2{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.secret-entry-overlay{backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* ============================================================
+   GLOBAL SCROLL FIX
+   Keep the viewport as the only page-level vertical scroller.
+   Some mobile browsers turn body{overflow-x:hidden} into a second
+   vertical scroll container, showing two bars on every page.
+   Clip horizontal overflow at the root and keep body non-scrollable.
+   ============================================================ */
+html {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+body,
+body.home-v2,
+body.secret-page,
+body.review-admin {
+  overflow: visible !important;
+}

@@ -36,7 +36,7 @@
 <main class="home-shell" id="content">
 <header class="home-hero">
 <div class="home-kicker"><span></span> ТЕТРАЛОГИЯ · 4 КНИГИ · 2026</div>
-<h1>Никто<br/><em>не вспомнит</em></h1>
+<h1 id="homeSecretTrigger" aria-label="Никто не вспомнит">Никто<br/><em>не вспомнит</em></h1>
 <p class="home-lead">Тетралогия из четырёх книг об одном человеке — о холоде, попытках спасать других, месте, где нас больше нет, и том, что остаётся после.</p>
 <div class="home-quote">«Я всего лишь писатель, и что об этом подумают другие — меня не волнует»</div>
 <div class="home-actions"><a class="home-primary" href="intro.html">Начать чтение <b>→</b></a><a class="home-secondary" href="book1.html" id="continueBtn">Продолжить <b>↗</b></a></div>
@@ -152,6 +152,22 @@
 </nav>
 <div class="home-footer-meta"><span>© 2026 · Никто не вспомнит</span><span>Читай медленно.</span></div>
 </footer>
+
+<div class="secret-entry-overlay" id="secretEntryOverlay" hidden>
+  <section class="secret-entry-panel" role="dialog" aria-modal="true" aria-labelledby="secretEntryTitle" aria-describedby="secretEntryHint">
+    <button class="secret-entry-close" id="secretEntryClose" type="button" aria-label="Закрыть">×</button>
+    <p class="secret-entry-kicker">ТИХАЯ ДВЕРЬ</p>
+    <h2 id="secretEntryTitle">Некоторые вещи открываются не сразу</h2>
+    <p id="secretEntryHint" class="secret-entry-hint">Введи ключевое слово.</p>
+    <form id="secretEntryForm" autocomplete="off">
+      <label for="secretEntryInput">Ключевое слово</label>
+      <input id="secretEntryInput" name="key" type="text" inputmode="text" autocapitalize="none" spellcheck="false" autocomplete="off" aria-describedby="secretEntryMessage" required>
+      <p class="secret-entry-message" id="secretEntryMessage" aria-live="polite"></p>
+      <button class="secret-entry-submit" type="submit">Открыть запись <span aria-hidden="true">↗</span></button>
+    </form>
+  </section>
+</div>
+
 </main>
 <script src="script.js"></script>
 </body>

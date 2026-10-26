@@ -57,6 +57,7 @@
     'theme-book4': { colors: ['111,255,214', '150,235,215'],                density: 0.5, speed: 0.7, size: 1.0 },
     'theme-belaya':{ colors: ['240,240,240', '200,169,110'],                density: 0.8, speed: 0.9, size: 1.0 },
     'archive-page':{ colors: ['200,169,110', '170,165,158'],                density: 0.7, speed: 0.9, size: 1.0 },
+    'secret2-page':{ colors: ['236,44,73', '255,85,109', '164,10,36'],       density: 0.85, speed: 0.85, size: 0.9 },
     'secret-page': { colors: ['143,112,192', '181,150,225'],                density: 1.0, speed: 1.1, size: 1.0 }
   };
 
