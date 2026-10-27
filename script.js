@@ -552,10 +552,42 @@
     const goToSecret = (url) => {
       if(secretRedirecting) return;
       secretRedirecting = true;
-      const overlay = $('#secretEntryOverlay');
-      if(overlay) overlay.hidden = true;
-      document.body.classList.add('void-transition');
-      setTimeout(() => { location.href = url; }, reduceMotion ? 80 : 1550);
+      const entryOverlay = $('#secretEntryOverlay');
+      if(entryOverlay) entryOverlay.hidden = true;
+
+      // Reduced-motion preference is respected: skip the visual transition entirely.
+      if(reduceMotion){
+        window.setTimeout(() => { location.href = url; }, 80);
+        return;
+      }
+
+      // A fixed viewport layer avoids animating <body>, which used to fade only
+      // its direct children and could leave the lower half of a long page visible.
+      const transition = document.createElement('div');
+      transition.id = 'secretTransition';
+      transition.className = 'secret-transition';
+      transition.setAttribute('aria-hidden', 'true');
+      transition.innerHTML = `
+        <div class="secret-transition__mist"></div>
+        <div class="secret-transition__fragments">
+          <span>не всё исчезает</span><span>почему именно так?</span>
+          <span>я помню</span><span>это осталось внутри</span>
+          <span>ответ не всегда очевиден</span><span>посмотри ещё раз</span>
+          <span>что изменилось?</span><span>не сразу</span>
+        </div>
+        <div class="secret-transition__glitch" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="secret-transition__signal">
+          <span class="secret-transition__phrase">Некоторые вещи понимаешь не сразу</span>
+          <strong>ЗАПИСЬ НАЙДЕНА</strong>
+        </div>
+      `;
+      document.body.appendChild(transition);
+      // Force style calculation so the entrance animation reliably starts.
+      void transition.offsetWidth;
+      transition.classList.add('is-active');
+      window.setTimeout(() => { location.href = url; }, 4400);
     };
     window.addEventListener('keydown', e => {
       if(e.ctrlKey || e.altKey || e.metaKey) return;
