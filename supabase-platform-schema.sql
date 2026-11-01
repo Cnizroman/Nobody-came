@@ -267,13 +267,59 @@ insert into public.contests (title, theme, description, prize, deadline, status)
 ('«Городские легенды»','Хоррор и мистика вашего района','Лифты, подъезды, остановки и дворы.','Сборник лучших работ на платформе','2027-02-28','soon')
 on conflict do nothing;
 
+
+-- ============================================================
+-- АВТОМАТИКА: владельцу больше НИЧЕГО настраивать не нужно.
+-- 1) Профиль автора создаётся сам при регистрации.
+-- 2) Email подтверждается сам (письмо ждать не надо).
+-- 3) Аккаунт с логином cnizroman автоматически становится
+--    основателем и администратором платформы.
+-- 4) Книги основателя встроены в сайт и в базу не вносятся.
+-- ============================================================
+create or replace function public.handle_new_user() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare v_username text; v_name text;
+begin
+  v_username := lower(coalesce(new.raw_user_meta_data->>'username', split_part(coalesce(new.email,''),'@',1)));
+  v_username := regexp_replace(v_username, '[^a-z0-9_]', '', 'g');
+  if length(v_username) < 3 then v_username := 'author_' || substr(new.id::text, 1, 8); end if;
+  while exists (select 1 from public.profiles where username = v_username) loop
+    v_username := v_username || '_' || substr(md5(random()::text), 1, 4);
+  end loop;
+  v_name := coalesce(nullif(trim(new.raw_user_meta_data->>'display_name'), ''), v_username);
+  insert into public.profiles (id, username, display_name, role, is_founder, badges)
+  values (
+    new.id, v_username, v_name,
+    case when v_username = 'cnizroman' then 'admin' else 'author' end,
+    (v_username = 'cnizroman'),
+    case when v_username = 'cnizroman'
+         then array['Основатель платформы','Первый автор']
+         else array['Новый автор'] end
+  )
+  on conflict (id) do nothing;
+  return new;
+end $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+create or replace function public.auto_confirm_new_user() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  update auth.users
+     set email_confirmed_at = coalesce(email_confirmed_at, now()), updated_at = now()
+   where id = new.id;
+  return new;
+end $$;
+drop trigger if exists on_auth_user_auto_confirm on auth.users;
+create trigger on_auth_user_auto_confirm after insert on auth.users
+  for each row execute function public.auto_confirm_new_user();
+
 -- ============================================================
 -- ПОСЛЕ ЗАПУСКА:
--- 1) Зарегистрируйтесь на сайте как основатель.
--- 2) Сделайте себя админом и первым автором (подставьте свой логин):
---    update public.profiles set role='admin', is_founder=true,
---      badges=array['Основатель платформы','Первый автор']
---    where username='cnizroman';
--- 3) Книги тетралогии при желании заведите через студию автора
---    с legacy_url: book1.html … book4.html, intro.html, belaya-golova.html
+-- Больше ничего делать не нужно. Просто откройте сайт и
+-- зарегистрируйтесь с логином cnizroman — профиль основателя,
+-- админка и значки выдадутся автоматически, подтверждение
+-- почты не потребуется, а книги первого автора уже встроены
+-- в платформу. Файл можно запускать повторно — он идемпотентен.
 -- ============================================================

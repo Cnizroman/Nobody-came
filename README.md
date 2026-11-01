@@ -48,15 +48,11 @@ python -m http.server 8000
 # http://localhost:8000
 ```
 
-Демо-вход в локальном режиме: логин любого автора из каталога (например, `cnizroman`), пароль `demo1234`.
+Вход основателя в локальном режиме: `cnizroman` / `demo1234`. Других произведений, кроме книг основателя, платформа изначально не содержит — остальные появятся только от настоящих зарегистрировавшихся авторов.
 
 ## 🗄️ Подключение Supabase (общая база)
 
-Без настройки сайт работает в **локальном режиме** на `localStorage`. Для настоящей общей платформы выполните один SQL-файл — пошагово в [`SUPABASE_PLATFORM_SETUP.md`](SUPABASE_PLATFORM_SETUP.md):
-
-1. SQL Editor → вставить [`supabase-platform-schema.sql`](supabase-platform-schema.sql) → Run.
-2. Authentication: настроить Email и Redirect URL сайта.
-3. Зарегистрироваться на сайте и одной командой SQL назначить себя основателем-админом.
+Без настройки сайт работает в **локальном режиме** на `localStorage`. Владельцу осталось **одно действие** — выполнить [`supabase-platform-schema.sql`](supabase-platform-schema.sql) в SQL Editor (на сайте есть страница `#/setup` с кнопкой «Скопировать SQL» и прямой ссылкой в проект). Профили авторов, подтверждение почты, права основателя-админа для логина `cnizroman` и конкурсы после этого работают автоматически; книги первого автора встроены в код и в базу не вносятся. Подробности: [`SUPABASE_PLATFORM_SETUP.md`](SUPABASE_PLATFORM_SETUP.md).
 
 Старая таблицы `reviews` и панель `reviews-admin.html` не трогаются и продолжают работать.
 
@@ -68,7 +64,7 @@ python -m http.server 8000
 ├── app.css                     # Дизайн платформы
 ├── app.js                      # Роутер и все страницы
 ├── store.js                    # Слой данных: Supabase REST + локальный режим
-├── data.js                     # Стартовые данные: Cnizroman + демо-авторы
+├── data.js                     # Встроенные книги основателя (только Cnizroman)
 ├── supabase-config.js          # Публичный ключ Supabase
 ├── supabase-platform-schema.sql# Полная схема платформы (RLS)
 ├── SUPABASE_PLATFORM_SETUP.md  # Подключение за 5 минут

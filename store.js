@@ -8,7 +8,7 @@
    ============================================================ */
 (function(){
 'use strict';
-const LS_DB='chernila_db_v1', LS_SESSION='chernila_session_v1', LS_PROGRESS='chernila_progress_v1';
+const LS_DB='chernila_db_v2', LS_SESSION='chernila_session_v2', LS_PROGRESS='chernila_progress_v1';
 const cfg = window.CHERNILA_SUPABASE_CONFIG || window.NOBODY_SUPABASE_CONFIG || {};
 const SB_URL=(cfg.url||'').replace(/\/$/,''), SB_KEY=cfg.publishableKey||cfg.anonKey||'';
 
@@ -19,7 +19,7 @@ function hash(s){let h=0;for(let i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);
 
 function seedState(){
   const s=clone(window.CHERNILA_SEED);
-  s.users=[ // локальные аккаунты сид-авторов (демо-вход: логин = username, пароль = demo1234)
+  s.users=[ // локальный аккаунт основателя (вход в локальном режиме: cnizroman / demo1234)
     ...s.authors.map(a=>({id:a.id,email:a.username+'@chernila.local',pass:hash('demo1234'),authorId:a.id}))
   ];
   return s;
@@ -51,6 +51,35 @@ function mapProfile(r){return {id:r.id,username:r.username,displayName:r.display
 function mapWork(r){return {id:r.id,authorId:r.author_id,title:r.title,subtitle:r.subtitle||'',type:r.type,genre:r.genre,tags:r.tags||[],description:r.description||'',status:r.status,ageRating:r.age_rating||'12+',legacyUrl:r.legacy_url||null,featured:!!r.featured,views:r.views||0,cover:r.cover||{from:'#222',to:'#c8a96e',symbol:'✦'},createdAt:(r.created_at||'').slice(0,10),updatedAt:(r.updated_at||'').slice(0,10)}}
 function mapChapter(r){return {id:r.id,workId:r.work_id,title:r.title,body:r.body||'',order:r.sort_order||1,status:r.status||'published',createdAt:(r.created_at||'').slice(0,10)}}
 
+
+/* Книги основателя встроены в платформу: подмешиваем их к данным Supabase,
+   чтобы владельцу не пришлось вносить их в базу вручную. Если основатель
+   зарегистрировался по-настоящему (username cnizroman), книги автоматически
+   привязываются к его настоящему аккаунту. */
+function injectFounder(state){
+  const seed=window.CHERNILA_SEED; if(!seed) return;
+  const seedFounder=seed.authors.find(a=>a.username==='cnizroman'); if(!seedFounder) return;
+  let founder=state.authors.find(a=>a.username==='cnizroman');
+  if(!founder){ founder=clone(seedFounder); state.authors.unshift(founder); }
+  seed.works.forEach(sw=>{
+    if(state.works.some(w=>w.id===sw.id||(sw.legacyUrl&&w.legacyUrl===sw.legacyUrl))) return;
+    const w=clone(sw); w.authorId=founder.id; state.works.push(w);
+    seed.chapters.filter(c=>c.workId===sw.id).forEach(sc=>{
+      if(!state.chapters.some(c=>c.id===sc.id)) state.chapters.push(clone(sc));
+    });
+  });
+}
+/* Настоящий аккаунт cnizroman «усыновляет» встроенного основателя */
+function adoptFounderIdentity(state, real){
+  if(!real||real.username!=='cnizroman'||real.id==='cnizroman') return;
+  if(!state.authors.some(a=>a.id==='cnizroman')) return;
+  state.works.forEach(w=>{ if(w.authorId==='cnizroman') w.authorId=real.id; });
+  state.follows.forEach(f=>{ if(f.authorId==='cnizroman') f.authorId=real.id; if(f.followerId==='cnizroman') f.followerId=real.id; });
+  state.likes.forEach(l=>{ if(l.userId==='cnizroman') l.userId=real.id; });
+  state.shelves.forEach(s=>{ if(s.userId==='cnizroman') s.userId=real.id; });
+  state.authors=state.authors.filter(a=>a.id!=='cnizroman');
+}
+
 const Store={
   mode:'local', // 'supabase' | 'local'
   state:null, session:null,
@@ -80,7 +109,7 @@ const Store={
       sbFetch('/rest/v1/contests?select=*&order=deadline.asc').catch(()=>[]),
       sbFetch('/rest/v1/contest_entries?select=*').catch(()=>[])
     ]);
-    if(works.length){ // база не пустая — она источник правды
+    { // Supabase — источник правды (даже если база пока пустая)
       this.state.authors=profiles.map(mapProfile);
       this.state.works=works.map(mapWork);
       this.state.chapters=chapters.map(mapChapter);
@@ -91,6 +120,7 @@ const Store={
       this.state.shelves=shelves.map(r=>({userId:r.user_id,workId:r.work_id,shelf:r.shelf}));
       if(contests.length) this.state.contests=contests.map(r=>({id:r.id,title:r.title,theme:r.theme,description:r.description||'',prize:r.prize||'',deadline:r.deadline,status:r.status}));
       this.state.contestEntries=entries.map(r=>({id:r.id,contestId:r.contest_id,workId:r.work_id,userId:r.user_id,createdAt:(r.created_at||'').slice(0,10)}));
+      injectFounder(this.state);
       saveLocal(this.state);
     }
   },
@@ -110,13 +140,23 @@ const Store={
     if((password||'').length<6) throw new Error('Пароль: минимум 6 символов.');
     if(this.mode==='supabase'){
       const data=await sbFetch('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password,data:{username,display_name:displayName||username}})});
-      const authId=data.user&&data.user.id; 
-      if(!authId) throw new Error('Проверьте почту: Supabase отправил письмо подтверждения. После подтверждения войдите.');
-      if(data.access_token) sbToken=data.access_token;
-      const author={id:authId,username,displayName:displayName||username,bio:'',motto:'',location:'',hue:Math.floor(Math.random()*360),role:'author',joinedAt:today(),badges:['Новый автор']};
-      await sbFetch('/rest/v1/profiles',{method:'POST',body:JSON.stringify({id:authId,username,display_name:author.displayName,avatar_hue:author.hue,badges:author.badges})});
-      this.state.authors.push(author); this.save();
-      this.setSession({authorId:authId,token:data.access_token||null,email});
+      let authId=data.user&&data.user.id, token=data.access_token||null;
+      if(!authId) throw new Error('Не удалось создать аккаунт. Попробуйте другой email.');
+      if(!token){ // почта подтверждается триггером в базе — просто входим
+        try{ const li=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})}); token=li.access_token; authId=li.user.id; }
+        catch(e){ throw new Error('Аккаунт создан. Если вход не удался, подтвердите email по письму и войдите.'); }
+      }
+      sbToken=token;
+      // профиль уже создал триггер handle_new_user — просто забираем его
+      let author=null;
+      try{ const rows=await sbFetch('/rest/v1/profiles?id=eq.'+authId+'&select=*'); if(rows&&rows[0]) author=mapProfile(rows[0]); }catch(e){}
+      if(!author){
+        author={id:authId,username,displayName:displayName||username,bio:'',motto:'',location:'',hue:Math.floor(Math.random()*360),role:username==='cnizroman'?'admin':'author',founder:username==='cnizroman',joinedAt:today(),badges:['Новый автор']};
+        try{ await sbFetch('/rest/v1/profiles',{method:'POST',body:JSON.stringify({id:authId,username,display_name:author.displayName,avatar_hue:author.hue,badges:author.badges})}); }catch(e){}
+      }
+      adoptFounderIdentity(this.state, author);
+      if(!this.state.authors.some(a=>a.id===author.id)) this.state.authors.push(author);
+      this.save(); this.setSession({authorId:authId,token,email});
       return author;
     }
     const author={id:uid('author'),username,displayName:displayName||username,bio:'',motto:'',location:'',hue:Math.floor(Math.random()*360),role:'author',joinedAt:today(),badges:['Новый автор']};
@@ -138,13 +178,14 @@ const Store={
         this.push(sbFetch('/rest/v1/profiles',{method:'POST',body:JSON.stringify({id:me.id,username:me.username,display_name:me.displayName})}));
         this.state.authors.push(me); this.save();
       }
+      adoptFounderIdentity(this.state, me); this.save();
       this.setSession({authorId:me.id,token:data.access_token,email:login});
       return me;
     }
     // локальный вход: логин или email + пароль (демо-аккаунты: username / demo1234)
     const author=this.state.authors.find(a=>a.username===login);
     const acc=this.state.users.find(u=>u.email.toLowerCase()===login||(author&&u.authorId===author.id));
-    if(!acc||acc.pass!==hash(password||'')) throw new Error('Неверный логин или пароль. Для демо-авторов пароль: demo1234');
+    if(!acc||acc.pass!==hash(password||'')) throw new Error('Неверный логин или пароль. Локальный вход основателя: cnizroman / demo1234');
     this.setSession({authorId:acc.authorId,email:acc.email});
     return this.currentUser();
   },

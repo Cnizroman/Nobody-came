@@ -85,8 +85,8 @@ function pageHome(){
   const featured=S.works.filter(w=>w.featured), fresh=[...S.works].sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,8);
   const top=[...S.works].map(w=>({w,r:rating(w.id)})).filter(x=>x.r).sort((a,b)=>b.r.outOf10-a.r.outOf10).slice(0,5);
   const topAuthors=[...S.authors].sort((a,b)=>followersOf(b.id)-followersOf(a.id)).slice(0,6);
-  const totalWords=S.works.reduce((s,w)=>s+workWords(w),0);
-  const quotes=S.authors.filter(a=>a.motto).map(a=>`«${a.motto}» — ${a.displayName}`).join(' &nbsp;✦&nbsp; ');
+  const totalViews=S.works.reduce((s,w)=>s+(w.views||0),0);
+  const quotes=[...S.authors.filter(a=>a.motto).map(a=>`«${a.motto}» — ${a.displayName}`),'Никого не вспомнят. Пока он не напишет','Читайте медленно. Пишите честно','Каждая история заслуживает своего читателя'].join(' &nbsp;✦&nbsp; ');
   const cont=Store.progress.get(); const contWorks=Object.keys(cont).map(work).filter(Boolean).slice(0,4);
   $('#app').innerHTML=`
   <div class="wrap">
@@ -98,7 +98,7 @@ function pageHome(){
         <div class="hstat"><b>${S.works.length}</b><span>произведений</span></div>
         <div class="hstat"><b>${S.authors.length}</b><span>авторов</span></div>
         <div class="hstat"><b>${S.chapters.filter(c=>c.status==='published').length}</b><span>глав и текстов</span></div>
-        <div class="hstat"><b>${fmt(totalWords)}</b><span>слов написано</span></div>
+        <div class="hstat"><b>${fmt(totalViews)}</b><span>просмотров книг</span></div>
         <div class="hstat"><b>${S.reviews.length}</b><span>рецензий</span></div>
       </div></header>
   </div>
@@ -112,12 +112,12 @@ function pageHome(){
         ${top.map((x,i)=>`<a class="rank" href="#/work/${x.w.id}"><span class="n">${i+1}</span>${ava(author(x.w.authorId))}<span style="flex:1"><b style="font-family:var(--serif)">${esc(x.w.title)}</b><br><span class="small muted">${esc(author(x.w.authorId).displayName)} · ${esc(x.w.genre)}</span></span><span class="rate">★ ${x.r.outOf10.toFixed(1)}</span></a>`).join('')||'<div class="empty">Рецензий пока нет</div>'}
         <p class="small muted">Рейтинг считается по фирменной системе «Чернил»: сюжет — до 5 баллов, персонажи, атмосфера, язык и эмоции — до 4. Максимум — 21 балл честной оценки.</p></div>
       <div><div class="sec-head"><div><div class="kicker">Жанры</div><h2>Куда нырнуть?</h2></div></div>
-        <div class="grid" style="grid-template-columns:1fr 1fr">${window.CHERNILA_SEED.genres.slice(0,8).map(g=>{const n=S.works.filter(w=>w.genre===g).length;return `<a class="genre-tile" href="#/catalog?genre=${encodeURIComponent(g)}"><h3>${esc(g)}</h3><span class="muted small">${n} произведений</span></a>`}).join('')}</div></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr">${window.CHERNILA_SEED.genres.slice(0,8).map(g=>{const n=S.works.filter(w=>w.genre===g).length;return `<a class="genre-tile" href="#/catalog?genre=${encodeURIComponent(g)}"><h3>${esc(g)}</h3><span class="muted small">${n?n+' произведений':'станьте первым автором здесь ✒'}</span></a>`}).join('')}</div></div>
     </div></section>
     <section class="block"><div class="sec-head"><div><div class="kicker">Обновления</div><h2>Свежее из-под пера</h2></div><a class="more" href="#/feed">Лента обновлений →</a></div>
       <div class="grid works">${fresh.map(workCard).join('')}</div></section>
     <section class="block"><div class="sec-head"><div><div class="kicker">Сообщество</div><h2>Авторы платформы</h2></div><a class="more" href="#/authors">Все авторы →</a></div>
-      <div class="grid authors">${topAuthors.map(authorCard).join('')}</div></section>
+      <div class="grid authors">${topAuthors.map(authorCard).join('')}<a class="author-card" href="${me()?'#/studio/new':'#/auth?mode=signup'}" style="align-items:center;justify-content:center;text-align:center;border-style:dashed"><div><span style="font-family:var(--serif);font-size:2.2rem;color:var(--gold)">✒</span><h3>Следующий автор — вы?</h3><p>Платформа открылась с книгами её основателя. Ваше произведение может стать следующим в каталоге.</p><span class="btn sm" style="margin-top:10px">Опубликовать произведение</span></div></a></div></section>
     <section class="block"><div class="contest-card"><div class="kicker">Первый конкурс платформы</div>
       <h2 style="font-size:clamp(1.8rem,4vw,2.7rem);margin:14px 0">«Первая строка»: рассказ, который начинается со слов «Никто не вспомнит…»</h2>
       <p class="muted" style="max-width:680px">Первая строка задана — всё остальное ваше. Любой жанр, до 15 000 знаков, приём работ открыт. Покажите платформе свой голос.</p>
@@ -250,7 +250,8 @@ function pageRead(wid,cid){
 }
 
 function pageAuthor(id){
-  const a=S.authors.find(x=>x.id===id); if(!a) return page404();
+  const a=S.authors.find(x=>x.id===id||x.username===id); if(!a) return page404();
+  id=a.id;
   setNav('authors'); const ws=S.works.filter(w=>w.authorId===id); const u=me();
   const totalViews=ws.reduce((s,w)=>s+(w.views||0),0), totalLikes=ws.reduce((s,w)=>s+likesOf(w.id),0);
   const revs=S.reviews.filter(r=>ws.some(w=>w.id===r.workId));
@@ -264,11 +265,11 @@ function pageAuthor(id){
     <div class="chiprow">${(a.badges||[]).map(b=>`<span class="pill gold">✦ ${esc(b)}</span>`).join('')}</div></div>
     <div style="display:flex;flex-direction:column;gap:9px">${u&&u.id!==a.id?`<button class="btn ${isFollowing(a.id)?'dark':''}" data-action="follow" data-id="${a.id}">${isFollowing(a.id)?'✓ Вы подписаны':'+ Подписаться'}</button>`:''}
     ${u&&u.id===a.id?`<a class="btn ghost" href="#/profile">✎ Редактировать профиль</a><a class="btn" href="#/studio">Студия автора</a>`:''}
-    ${a.id==='cnizroman'?`<a class="btn ghost" href="https://www.donationalerts.com/r/cnizroman" target="_blank" rel="noopener">Поддержать автора ↗</a>`:''}</div></div>
+    ${a.username==='cnizroman'?`<a class="btn ghost" href="https://www.donationalerts.com/r/cnizroman" target="_blank" rel="noopener">Поддержать автора ↗</a>`:''}</div></div>
     <div class="hero-stats"><div class="hstat"><b>${ws.length}</b><span>произведений</span></div><div class="hstat"><b>${followersOf(a.id)}</b><span>подписчиков</span></div>
     <div class="hstat"><b>${S.follows.filter(f=>f.followerId===a.id).length}</b><span>подписок</span></div><div class="hstat"><b>${fmt(totalViews)}</b><span>просмотров</span></div>
     <div class="hstat"><b>${totalLikes}</b><span>лайков</span></div><div class="hstat"><b>${revs.length}</b><span>рецензий получено</span></div></div></header>
-    ${a.id==='cnizroman'?`<section class="block"><div class="panel"><div class="kicker">Наследие платформы</div><h2 style="margin:12px 0">Архив автора «Никто не вспомнит»</h2>
+    ${a.username==='cnizroman'?`<section class="block"><div class="panel"><div class="kicker">Наследие платформы</div><h2 style="margin:12px 0">Архив автора «Никто не вспомнит»</h2>
       <p class="muted">«Чернила» выросли из личного литературного проекта Cnizroman. Закулисье тетралогии сохранено полностью:</p>
       <div class="chiprow" style="margin-top:12px">${[['archive-references.html','🔗 Отсылки'],['archive-thoughts.html','💭 Изначальные мысли'],['archive-visual.html','🎨 Визуальный архив'],['archive-cut.html','Вырезанное'],['archive-drafts.html','✍ Черновики']].map(([h,l])=>`<a class="chipbtn" href="${h}">${l} ↗</a>`).join('')}</div></div></section>`:''}
     <section class="block"><div class="sec-head"><div><div class="kicker">Библиография</div><h2>Произведения автора</h2></div></div>
@@ -483,17 +484,53 @@ function pageAuth(params){
    <p class="muted center">${mode==='signup'?'Минута — и у вас студия, редактор, подписчики и первые читатели.':'Ваши черновики и полка скучали.'}</p>
    <div class="tabs" style="justify-content:center;margin-top:18px"><a href="#/auth" class="${mode==='login'?'on':''}">Вход</a><a href="#/auth?mode=signup" class="${mode==='signup'?'on':''}">Регистрация</a></div>
    <form class="stack" id="authForm">
-   ${mode==='signup'?`<label class="field">Логин (латиница) *<input class="input" name="username" required placeholder="anna_tishina" autocomplete="username"></label>
+   ${mode==='signup'?`<label class="field">Логин (латиница) *<input class="input" name="username" required placeholder="ваш_логин" autocomplete="username"></label>
    <label class="field">Имя или псевдоним *<input class="input" name="displayName" required placeholder="Как вас будут знать читатели"></label>
    <label class="field">Email *<input class="input" name="email" type="email" required autocomplete="email"></label>`
    :`<label class="field">Логин или email<input class="input" name="login" required autocomplete="username" placeholder="cnizroman или you@mail.ru"></label>`}
    <label class="field">Пароль *<input class="input" name="password" type="password" required minlength="6" autocomplete="${mode==='signup'?'new-password':'current-password'}"></label>
    <button class="btn" type="submit" style="justify-content:center">${mode==='signup'?'Создать аккаунт автора':'Войти'}</button>
-   <p class="small muted center">${Store.mode==='supabase'?'Аккаунты хранятся в Supabase Auth — общей базе платформы.':'Локальный режим: аккаунт создаётся в вашем браузере. Демо-авторы: логин из каталога авторов, пароль <b>demo1234</b> (например, cnizroman).'}</p>
+   <p class="small muted center">${Store.mode==='supabase'?'Аккаунты хранятся в Supabase Auth — общей базе платформы.':'Локальный режим: аккаунт создаётся в вашем браузере. Вход основателя: <b>cnizroman</b> / <b>demo1234</b>'}</p>
    </form></div></div></div>`;
   $('#authForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
     try{ if(mode==='signup') await Store.signup(f); else await Store.login(f); renderUserChip(); toast('Добро пожаловать в «Чернила», '+me().displayName+' ✒'); location.hash='#/studio'; }
     catch(err){ toast(err.message,true); btn.disabled=false; }});
+}
+
+
+/* ---------- Запуск общей платформы: одно действие владельца ---------- */
+function pageSetup(){
+  setNav('');
+  const cfg=window.CHERNILA_SUPABASE_CONFIG||{}; const ref=((cfg.url||'').match(/https:\/\/([^.]+)\./)||[])[1]||'';
+  const sqlUrl='https://supabase.com/dashboard/project/'+ref+'/sql/new';
+  const done=Store.mode==='supabase';
+  $('#app').innerHTML=`<div class="wrap" style="max-width:860px;padding:52px 0 0"><div class="kicker">Запуск платформы</div>
+  <h1 style="font-size:clamp(2rem,5vw,3rem);margin:14px 0">${done?'Общая база подключена ✦':'Осталось одно действие'}</h1>
+  ${done?`<div class="panel"><p style="font-family:var(--body);font-size:1.2rem">«Чернила» работают на общей базе Supabase: аккаунты, произведения, рецензии и подписки теперь едины для всех посетителей.</p>
+    <p class="muted">Если вы основатель — просто зарегистрируйтесь на сайте с логином <b style="color:var(--gold2)">cnizroman</b>: профиль основателя, админка и ваши книги подключатся автоматически. Подтверждение почты не потребуется.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#/auth?mode=signup">Зарегистрироваться</a><a class="btn ghost" href="#/catalog">В каталог</a></div></div>`
+  :`<p class="muted" style="font-family:var(--body);font-size:1.18rem">Сейчас платформа работает в локальном режиме: всё функционирует, но данные хранятся в браузере каждого посетителя по отдельности. Чтобы у всех авторов и читателей была <b style="color:var(--text)">одна общая платформа</b>, владельцу нужно выполнить один готовый SQL-файл в Supabase. Это единственное ручное действие — всё остальное автоматизировано.</p>
+  <div class="panel stack" style="margin-top:22px">
+    <div><span class="pill gold">Шаг 1</span> <b style="font-family:var(--serif);font-size:1.15rem;margin-left:8px">Скопируйте готовый SQL платформы</b>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn" id="copySql" type="button">⧉ Скопировать SQL</button><a class="btn ghost" href="supabase-platform-schema.sql" target="_blank" rel="noopener">Посмотреть файл</a></div></div>
+    <div><span class="pill gold">Шаг 2</span> <b style="font-family:var(--serif);font-size:1.15rem;margin-left:8px">Откройте SQL Editor вашего Supabase, вставьте и нажмите Run</b>
+      <div style="margin-top:12px"><a class="btn" href="${sqlUrl}" target="_blank" rel="noopener">Открыть SQL Editor проекта ↗</a></div></div>
+    <div><span class="pill gold">Шаг 3</span> <b style="font-family:var(--serif);font-size:1.15rem;margin-left:8px">Вернитесь сюда и проверьте</b>
+      <div style="margin-top:12px"><button class="btn ghost" type="button" onclick="location.reload()">↻ Проверить подключение</button></div></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><h3 style="margin-bottom:10px">Что произойдёт само — без ваших действий</h3>
+    <ul class="muted" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px">
+      <li>Сайт сам определит, что общая база готова, и переключится на неё при следующей загрузке.</li>
+      <li>Профиль каждого автора будет создаваться автоматически при регистрации, подтверждение почты не потребуется.</li>
+      <li>Аккаунт с логином <b style="color:var(--gold2)">cnizroman</b> автоматически станет основателем и администратором — зарегистрируйтесь с ним первым.</li>
+      <li>Книги первого автора уже встроены в платформу: вносить их в базу вручную не нужно.</li>
+      <li>Конкурсы уже заведены в том же SQL-файле.</li>
+    </ul></div>`}
+  </div>`;
+  const b=$('#copySql');
+  if(b) b.addEventListener('click',async()=>{ b.disabled=true; b.textContent='Загружаю SQL…';
+    try{ const sql=await (await fetch('supabase-platform-schema.sql')).text(); await navigator.clipboard.writeText(sql); b.textContent='✓ SQL скопирован — теперь шаг 2'; toast('SQL платформы скопирован в буфер обмена'); }
+    catch(e){ b.disabled=false; b.textContent='⧉ Скопировать SQL'; toast('Не получилось скопировать автоматически — откройте файл и скопируйте вручную',true); window.open('supabase-platform-schema.sql','_blank'); }});
 }
 
 function pageAbout(){
@@ -505,8 +542,8 @@ function pageAbout(){
   <h2 style="color:var(--text);margin:34px 0 10px">Для читателей</h2><p>Каталог по типам и жанрам, удобная читалка с темами «Тьма», «Бумага» и «Свет», личная полка, подписки на авторов и лента новых глав. Рецензии — по фирменной системе пяти критериев: сюжет (до 5), персонажи, атмосфера, язык и эмоции (до 4). Максимум — 21 балл, и он что-то значит.</p>
   <h2 style="color:var(--text);margin:34px 0 10px">Для авторов</h2><p>Студия автора: произведения и главы, черновики с автосохранением, редактор с форматированием, генератор обложек, статистика просмотров, подписчики и конкурсы. Публикация бесплатна и мгновенна, права на тексты остаются у автора.</p>
   <h2 style="color:var(--text);margin:34px 0 10px">Правила дома</h2><p>Пишите честно. Рецензируйте так, как хотели бы, чтобы рецензировали вас: с аргументами и без злобы. Плагиат и спам удаляются модерацией. Всё остальное — литература.</p>
-  <h2 style="color:var(--text);margin:34px 0 10px">Техника</h2><p>Платформа — статичный сайт на GitHub Pages, данные и аккаунты — Supabase (Auth, Postgres, Row Level Security). Сейчас режим данных: <b style="color:var(--gold2)">${Store.mode==='supabase'?'Supabase — общая база всех читателей':'локальный (браузер) — выполните supabase-platform-schema.sql, чтобы включить общую базу'}</b>.</p>
-  </div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:26px"><a class="btn" href="#/catalog">В каталог</a><a class="btn ghost" href="#/auth?mode=signup">Стать автором</a></div></div>`;
+  <h2 style="color:var(--text);margin:34px 0 10px">Техника</h2><p>Платформа — статичный сайт на GitHub Pages, данные и аккаунты — Supabase (Auth, Postgres, Row Level Security). Сейчас режим данных: <b style="color:var(--gold2)">${Store.mode==='supabase'?'Supabase — общая база всех читателей':'локальный (браузер)'}</b>.</p>
+  </div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:26px">${Store.mode==='supabase'?'':'<a class="btn" href="#/setup">Запуск общей базы: одно действие владельца →</a>'}<a class="btn" href="#/catalog">В каталог</a><a class="btn ghost" href="#/auth?mode=signup">Стать автором</a></div></div>`;
 }
 function page404(){ setNav(''); $('#app').innerHTML=`<div class="wrap"><div class="empty" style="margin-top:70px"><span class="big">✒</span><h2 style="font-size:2rem">Эта страница ещё не написана</h2><p>Возможно, автор её только придумывает. Вернитесь в каталог — там уже много готового.</p><a class="btn" href="#/catalog">В каталог</a> <a class="btn ghost" href="#/">На главную</a></div></div>`; }
 
@@ -546,6 +583,7 @@ function route(){
     else if(seg[0]==='contests') pageContests();
     else if(seg[0]==='auth') pageAuth(params);
     else if(seg[0]==='about') pageAbout();
+    else if(seg[0]==='setup') pageSetup();
     else if(seg[0]==='profile') pageProfile();
     else if(seg[0]==='admin') pageAdmin();
     else if(seg[0]==='studio'&&!seg[1]) pageStudio();
