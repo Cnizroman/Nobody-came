@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /reviews-admin.html
+Disallow: /secret.html
 
 Sitemap: https://cnizroman.github.io/Nobody-came/sitemap.xml
+Disallow: /secret2.html

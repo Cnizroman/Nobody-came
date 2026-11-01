@@ -1,93 +1,186 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0a0908">
-<meta name="color-scheme" content="dark">
-<title>Чернила — платформа для авторов: рассказы, романы, стихотворения</title>
-<meta name="description" content="«Чернила» — тёмная литературная платформа для всех авторов. Публикуйте рассказы, романы, повести и стихотворения, находите читателей, получайте рецензии по пяти критериям и участвуйте в конкурсах. Первый автор платформы — Cnizroman с тетралогией «Никто не вспомнит».">
-<link rel="canonical" href="https://cnizroman.github.io/Nobody-came/">
-<meta property="og:type" content="website"><meta property="og:locale" content="ru_RU">
-<meta property="og:site_name" content="Чернила">
-<meta property="og:title" content="Чернила — платформа для авторов">
-<meta property="og:description" content="Место, где истории находят читателей, а авторы — друг друга. Рассказы, романы, стихи, конкурсы и честные рецензии.">
-<meta property="og:image" content="https://cnizroman.github.io/Nobody-came/assets/og-image.png">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="#08090d" name="theme-color"/>
+<meta content="Никто не вспомнит — тетралогия. Четыре книги о дороге, помощи, памяти и незавершённых делах." name="description"/>
+<title>Никто не вспомнит · Цикл</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet"/>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2308090d'/%3E%3Cpath d='M32 14v36M14 32h36' stroke='%23c8a96e' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='11' fill='none' stroke='%23c8a96e' stroke-width='2.5'/%3E%3C/svg%3E" rel="icon"/>
+<meta content="dark" name="color-scheme"/>
+<meta content="Никто не вспомнит" property="og:site_name"/>
+<meta content="website" property="og:type"/>
+<meta content="ru_RU" property="og:locale"/>
+<meta content="Никто не вспомнит · Цикл" property="og:title"/>
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0908'/%3E%3Cpath d='M32 10c7 10 12 16.5 12 24a12 12 0 1 1-24 0c0-7.5 5-14 12-24z' fill='none' stroke='%23c8a96e' stroke-width='3'/%3E%3Ccircle cx='32' cy='38' r='4' fill='%23c8a96e'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta content="Никто не вспомнит — тетралогия. Четыре книги о дороге, помощи, памяти и незавершённых делах." property="og:description"/>
+<link href="style.css" rel="stylesheet"/>
+<script src="visuals.js" defer></script>
+<link rel="canonical" href="https://cnizroman.github.io/Nobody-came/">
+<meta property="og:url" content="https://cnizroman.github.io/Nobody-came/">
+<meta property="og:image" content="https://cnizroman.github.io/Nobody-came/assets/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://cnizroman.github.io/Nobody-came/assets/og-image.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
-<script src="supabase-config.js"></script>
-<script src="data.js" defer></script>
-<script src="store.js" defer></script>
-<script src="app.js" defer></script>
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 </head>
-<body>
-<div class="reader-progress" id="readProgress" style="width:0"></div>
-
-<header class="topbar">
-  <div class="wrap topbar-in">
-    <button class="burger" id="burger" aria-label="Меню">☰</button>
-    <a class="logo" href="#/"><span class="logo-mark">✒</span>Черни<em>ла</em></a>
-    <nav class="nav" id="mainNav" aria-label="Основная навигация">
-      <a href="#/" data-nav="home">Главная</a>
-      <a href="#/catalog" data-nav="catalog">Каталог</a>
-      <a href="#/authors" data-nav="authors">Авторы</a>
-      <a href="#/contests" data-nav="contests">Конкурсы</a>
-      <a href="#/feed" data-nav="feed">Лента</a>
-      <a href="#/library" data-nav="library">Моя полка</a>
-      <a href="#/studio" data-nav="studio">Студия автора</a>
-    </nav>
-    <form class="top-search" id="topSearch" role="search">
-      <span aria-hidden="true">⌕</span>
-      <input id="topSearchInput" type="search" placeholder="Название, автор, тег…" aria-label="Поиск по платформе">
-    </form>
-    <div class="userchip" id="userChip"></div>
-  </div>
-  <div class="mode-banner" id="modeBanner" hidden>
-    <div class="wrap"><span>● Локальный режим: данные пока хранятся в браузере каждого посетителя. Владельцу платформы осталось <a href="#/setup"><b>одно действие</b></a>, чтобы включить общую базу для всех.</span><span style="margin-left:auto">Вход основателя: <b>cnizroman</b> · <b>demo1234</b></span></div>
-  </div>
+<body class="home-v2">
+<a class="skip-link" href="#content">К тексту</a>
+<div class="home-noise"></div>
+<div class="home-orb orb-a"></div><div class="home-orb orb-b"></div>
+<main class="home-shell" id="content">
+<header class="home-hero">
+<div class="home-kicker"><span></span> ТЕТРАЛОГИЯ · 4 КНИГИ · 2026</div>
+<h1 id="homeSecretTrigger" aria-label="Никто не вспомнит">Никто<br/><em>не вспомнит</em></h1>
+<p class="home-lead">Тетралогия из четырёх книг об одном человеке — о холоде, попытках спасать других, месте, где нас больше нет, и том, что остаётся после.</p>
+<div class="home-quote">«Я всего лишь писатель, и что об этом подумают другие — меня не волнует»</div>
+<div class="home-actions"><a class="home-primary" href="intro.html">Начать чтение <b>→</b></a><a class="home-secondary" href="book1.html" id="continueBtn">Продолжить <b>↗</b></a></div>
+<div class="home-stats">
+<div class="stat"><b data-count="4">4</b><span>книги в цикле</span></div>
+<div class="stat"><b data-count="1">1</b><span>отдельная история</span></div>
+<div class="stat"><b data-count="5">5</b><span>разделов архива</span></div>
+</div>
 </header>
+<section class="path-section" aria-label="Путь цикла">
+<div class="section-head">
+<div class="section-kicker"><span></span> ПУТЬ · ОТ ХОЛОДА К ЛИМБО</div>
+<h2>Четыре состояния одного человека</h2>
+<p class="section-note">Цикл движется не по сюжету, а по внутреннему состоянию: от холода и одиночества к последнему вопросу, который остаётся в конце. Нажимай на остановку, чтобы открыть книгу.</p>
+</div>
+<div class="path-list">
+<a class="path-stop path-stop-intro" href="intro.html" data-spotlight style="--stop:#c8a96e">
+<span class="path-dot" aria-hidden="true"></span>
+<div class="path-body">
+<span class="path-step">00 · ПРОЛОГ</span>
+<h3>Не с начала...</h3>
+<p>Несколько страниц, с которых начинается попытка понять всё остальное. Не начало истории — точка, из которой становится понятен её голос.</p>
+<div class="path-foot"><span class="path-mood">Пролог · вступление</span><span class="path-go">Читать <b>&#8599;</b></span></div>
+</div>
+<i class="path-progress" data-progress-for="intro.html"></i>
+</a>
+<a class="path-stop" href="book1.html" data-spotlight style="--stop:#73b9d4">
+<span class="path-dot" aria-hidden="true"></span>
+<div class="path-body">
+<span class="path-step">01 · ХОЛОД</span>
+<h3>Дорога из Холода</h3>
+<p>Уйти туда, где хотя бы физически можно дышать. Кажется, что справиться можно только одному — и что просить помощи стыдно.</p>
+<div class="path-foot"><span class="path-mood">Состояние · одиночество</span><span class="path-go">Читать <b>&#8599;</b></span></div>
+</div>
+<i class="path-progress" data-progress-for="book1.html"></i>
+</a>
+<a class="path-stop" href="book2.html" data-spotlight style="--stop:#b8b8b8">
+<span class="path-dot" aria-hidden="true"></span>
+<div class="path-body">
+<span class="path-step">02 · ТИШИНА</span>
+<h3>Спасательный круг</h3>
+<p>Помощь другим как способ не думать о себе. Но того, кто всё время спасает, тоже нужно спасать — и об этом никто не спрашивает.</p>
+<div class="path-foot"><span class="path-mood">Состояние · помощь как бегство</span><span class="path-go">Читать <b>&#8599;</b></span></div>
+</div>
+<i class="path-progress" data-progress-for="book2.html"></i>
+</a>
+<a class="path-stop" href="book3.html" data-spotlight style="--stop:#a67bc4">
+<span class="path-dot" aria-hidden="true"></span>
+<div class="path-body">
+<span class="path-step">03 · КОСМОС</span>
+<h3>Где нас нет</h3>
+<p>Самая длинная и самая личная запись цикла. Место, где этих людей уже нет, но то, что они оставили, продолжает звучать.</p>
+<div class="path-foot"><span class="path-mood">Состояние · память</span><span class="path-go">Читать <b>&#8599;</b></span></div>
+</div>
+<i class="path-progress" data-progress-for="book3.html"></i>
+</a>
+<a class="path-stop" href="book4.html" data-spotlight style="--stop:#6fffd6">
+<span class="path-dot" aria-hidden="true"></span>
+<div class="path-body">
+<span class="path-step">04 · ЛИМБО</span>
+<h3>7 Дней</h3>
+<p>Семь дней, чтобы помочь другому. Ограничение по времени превращает помощь в задачу, а задачу — в разговор с самим собой.</p>
+<div class="path-foot"><span class="path-mood">Состояние · выбор</span><span class="path-go">Читать <b>&#8599;</b></span></div>
+</div>
+<i class="path-progress" data-progress-for="book4.html"></i>
+</a>
+</div>
+</section>
 
-<main id="app" tabindex="-1">
-  <div class="wrap" style="padding:90px 20px;text-align:center;color:var(--muted)">
-    <div style="font-family:var(--serif);font-size:2.4rem;color:var(--gold)">✒</div>
-    <p>Чернила наливаются…</p>
-  </div>
-</main>
+<section aria-label="Отдельные истории" class="standalone-section">
+<div aria-hidden="true" class="standalone-divider"></div>
+<h2 class="standalone-heading">Отдельные истории</h2>
+<p class="standalone-note">Самостоятельные произведения. Они не входят в тетралогию и не являются пятыми книгами.</p>
+<a class="story-card standalone-card" href="belaya-golova.html" data-spotlight data-tilt>
+<div class="story-number">—</div>
+<div>
+<span class="story-tag">САМОСТОЯТЕЛЬНОЕ ПРОИЗВЕДЕНИЕ</span>
+<h2>Белая голова</h2>
+<p>Психологический детектив о памяти, личности, исчезновении и человеке, которого кто-то продолжает называть Марком.</p>
+</div>
+<span class="story-arrow">↗</span>
+<i class="story-progress" data-progress-for="belaya-golova.html"></i>
+</a>
+</section>
 
-<footer class="site">
-  <div class="wrap foot-grid">
-    <div>
-      <a class="logo" href="#/" style="margin-bottom:14px"><span class="logo-mark">✒</span>Черни<em>ла</em></a>
-      <p>Гигантская тёмная платформа для авторов рассказов, историй, стихотворений и всего, что пишется буквами. Место, где истории находят читателей, а авторы — друг друга.</p>
-      <p class="small">Родилась из авторского проекта Cnizroman «Никто не вспомнит». Теперь — для всех, кого никто не вспомнит. Пока они не напишут.</p>
-    </div>
-    <div><h4>Читать</h4><nav>
-      <a href="#/catalog">Каталог произведений</a><a href="#/catalog?type=poetry">Стихотворения</a>
-      <a href="#/catalog?type=story">Рассказы</a><a href="#/catalog?type=novel">Романы</a><a href="#/feed">Лента обновлений</a>
-    </nav></div>
-    <div><h4>Авторам</h4><nav>
-      <a href="#/studio">Студия автора</a><a href="#/studio/new">Опубликовать произведение</a>
-      <a href="#/contests">Конкурсы</a><a href="#/authors">Сообщество авторов</a><a href="#/about">Как устроена платформа</a><a href="#/setup">Запуск общей базы</a>
-    </nav></div>
-    <div><h4>Первый автор</h4><nav>
-      <a href="#/author/cnizroman">Cnizroman и его книги</a>
-      <a href="intro.html">Не с начала... (пролог)</a><a href="belaya-golova.html">Белая голова</a>
-      <a href="archive-visual.html">Архив автора</a>
-      <a href="https://www.donationalerts.com/r/cnizroman" target="_blank" rel="noopener">Поддержать основателя ↗</a>
-    </nav></div>
+<section aria-label="Архив автора" class="author-archive-section" id="author-archive">
+<div aria-hidden="true" class="archive-rule"></div>
+<div class="archive-kicker">AUTHOR ARCHIVE · ЗАКУЛИСЬЕ</div>
+<h2>Архив автора</h2>
+<p class="archive-intro">Не отдельная история и не продолжение тетралогии. Это закулисье проекта: пять больших разделов, внутри которых собраны отсылки, изначальные мысли, визуальные материалы, вырезанное и черновики.</p>
+<div class="archive-grid archive-category-grid">
+<a class="archive-card archive-category-card" href="archive-references.html" data-spotlight><span class="archive-card-index">01</span><span class="archive-card-body"><span class="archive-card-cat">КАТЕГОРИЯ</span><strong>🔗 ОТСЫЛКИ</strong><small>Музыка, Oxxxymiron, MZLFF, другие артисты и повторяющиеся символы.</small></span><span class="archive-card-arrow">↗</span></a>
+<a class="archive-card archive-category-card" href="archive-thoughts.html" data-spotlight><span class="archive-card-index">02</span><span class="archive-card-body"><span class="archive-card-cat">КАТЕГОРИЯ</span><strong>💭 ИЗНАЧАЛЬНЫЕ МЫСЛИ</strong><small>С чего всё началось, почему первой появилась третья история и как выросла тетралогия.</small></span><span class="archive-card-arrow">↗</span></a>
+<a class="archive-card archive-category-card" href="archive-visual.html" data-spotlight><span class="archive-card-index">03</span><span class="archive-card-body"><span class="archive-card-cat">КАТЕГОРИЯ</span><strong>🎨 ВИЗУАЛЬНЫЙ АРХИВ</strong><small>«7 Дней», Лимбо и отдельные материалы об Арго, Бааламе, Лине и Хароне.</small></span><span class="archive-card-arrow">↗</span></a>
+<a class="archive-card archive-category-card" href="archive-cut.html" data-spotlight><span class="archive-card-index">04</span><span class="archive-card-body"><span class="archive-card-cat">КАТЕГОРИЯ</span><strong>🗑️ ВЫРЕЗАННОЕ</strong><small>Озвучка, удалённые сцены, альтернативные идеи и всё, что не вошло в финальную версию.</small></span><span class="archive-card-arrow">↗</span></a>
+<a class="archive-card archive-category-card" href="archive-drafts.html" data-spotlight><span class="archive-card-index">05</span><span class="archive-card-body"><span class="archive-card-cat">КАТЕГОРИЯ</span><strong>✍️ ЧЕРНОВИКИ</strong><small>Ранние названия, формулировки и следы промежуточных версий проекта.</small></span><span class="archive-card-arrow">↗</span></a>
+</div>
+</section>
+
+<section class="author-support" aria-label="Поддержать автора">
+  <div class="author-support-copy">
+    <div class="author-support-kicker"><span aria-hidden="true"></span> ПОДДЕРЖКА АВТОРА</div>
+    <h2>Помочь этой истории продолжаться</h2>
+    <p>Если тебе близок этот проект и хочется поддержать его дальнейшее развитие, это можно сделать здесь.</p>
   </div>
-  <div class="wrap" style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:.86rem">
-    <span>© 2026 · Чернила. Все тексты принадлежат их авторам.</span><span>Читайте медленно. Пишите честно.</span>
-  </div>
+  <a class="author-support-link" href="https://www.donationalerts.com/r/cnizroman" target="_blank" rel="noopener noreferrer">
+    <span>Поддержать автора</span><span aria-hidden="true">↗</span>
+  </a>
+</section>
+
+<footer class="home-footer">
+<div class="home-footer-brand">
+<div class="home-footer-mark"><i aria-hidden="true">✦</i> Никто не вспомнит</div>
+<div class="home-footer-tag">Авторский литературный проект · Cnizroman</div>
+</div>
+<nav class="home-footer-links" aria-label="Навигация по сайту">
+<a href="intro.html">Не с начала</a>
+<a href="belaya-golova.html">Белая голова</a>
+<a href="archive-visual.html">Визуальный архив</a>
+<a href="archive-references.html">Отсылки</a>
+<a href="archive-thoughts.html">Изначальные мысли</a>
+<a href="archive-cut.html">Вырезанное</a>
+<a href="archive-drafts.html">Черновики</a>
+<a href="https://www.donationalerts.com/r/cnizroman" target="_blank" rel="noopener noreferrer">Поддержать автора ↗</a>
+</nav>
+<div class="home-footer-meta"><span>© 2026 · Никто не вспомнит</span><span>Читай медленно.</span></div>
 </footer>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div id="modalRoot"></div>
-<script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
+<div class="secret-entry-overlay" id="secretEntryOverlay" hidden>
+  <section class="secret-entry-panel" role="dialog" aria-modal="true" aria-labelledby="secretEntryTitle" aria-describedby="secretEntryHint">
+    <button class="secret-entry-close" id="secretEntryClose" type="button" aria-label="Закрыть">×</button>
+    <p class="secret-entry-kicker">ТИХАЯ ДВЕРЬ</p>
+    <h2 id="secretEntryTitle">Некоторые вещи открываются не сразу</h2>
+    <p id="secretEntryHint" class="secret-entry-hint">Введи ключевое слово.</p>
+    <form id="secretEntryForm" autocomplete="off">
+      <label for="secretEntryInput">Ключевое слово</label>
+      <input id="secretEntryInput" name="key" type="text" inputmode="text" autocapitalize="none" spellcheck="false" autocomplete="off" aria-describedby="secretEntryMessage" required>
+      <p class="secret-entry-message" id="secretEntryMessage" aria-live="polite"></p>
+      <button class="secret-entry-submit" type="submit">Открыть запись <span aria-hidden="true">↗</span></button>
+    </form>
+  </section>
+</div>
+
+</main>
+<script src="script.js"></script>
 </body>
 </html>
