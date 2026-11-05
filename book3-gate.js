@@ -1,13 +1,3 @@
-/* ============================================================
-   «Где нас нет» — доступ к тексту только после пароля.
-
-   Текста книги нет ни в этом файле, ни в book3.html: он лежит
-   в book3-vault.js, зашифрованный AES-GCM, а ключ выводится из
-   пароля (PBKDF2-SHA256, 250 000 итераций) только после ввода.
-   Поэтому удаление оверлея, правка классов в инспекторе или
-   просмотр исходника страницы не открывают ни одной строки:
-   до верного пароля в браузере просто нет текста.
-   ============================================================ */
 (() => {
   'use strict';
 
@@ -46,7 +36,7 @@
       { name: 'PBKDF2', salt, iterations: VAULT.kdf.iterations, hash: VAULT.kdf.hash },
       base,
       { name: 'AES-GCM', length: 256 },
-      true,            // нужен export → чтобы не спрашивать пароль при обновлении страницы
+      true,            
       ['encrypt', 'decrypt']
     );
   }
@@ -61,7 +51,7 @@
       );
       return td.decode(plain);
     } catch (e) {
-      return null; // неверный пароль — GCM не прошёл проверку тега
+      return null;
     }
   }
 
@@ -112,7 +102,7 @@
       try {
         const raw = await crypto.subtle.exportKey('raw', key);
         sessionStorage.setItem(SESSION_KEY, bytesToB64(new Uint8Array(raw)));
-      } catch (e) { /* приватный режим — просто спросим пароль снова после перезагрузки */ }
+      } catch (e) { 
       render(html);
     } catch (e) {
       fail('Не удалось проверить пароль. Попробуйте ещё раз.');
@@ -130,7 +120,7 @@
   closeBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
   input.focus();
 
-  // уже открывали в этой сессии — не заставляем вводить пароль заново
+
   (async () => {
     if (!cryptoOk) return;
     const saved = sessionStorage.getItem(SESSION_KEY);
@@ -139,7 +129,7 @@
       const key = await crypto.subtle.importKey('raw', b64ToBytes(saved), 'AES-GCM', true, ['decrypt']);
       const html = await openWith(key);
       if (html) { render(html); return; }
-    } catch (e) { /* ключ устарел после обновления текста */ }
+    } catch (e) { 
     sessionStorage.removeItem(SESSION_KEY);
   })();
 
