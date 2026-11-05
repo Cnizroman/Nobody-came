@@ -549,9 +549,15 @@
       { word: 'конец', url: 'secret.html' },
       { word: 'осознание', url: 'secret2.html' }
     ];
-    const goToSecret = (url) => {
+    // Слово, которым открыли дверь, передаётся скрытой странице: она расшифрована,
+    // поэтому в её файле текста нет — ключ нужен для расшифровки в браузере.
+    const handOffWord = (word) => {
+      try { sessionStorage.setItem('secret-word', word); } catch(e){}
+    };
+    const goToSecret = (url, word) => {
       if(secretRedirecting) return;
       secretRedirecting = true;
+      if(word) handOffWord(word);
       const entryOverlay = $('#secretEntryOverlay');
       if(entryOverlay) entryOverlay.hidden = true;
 
@@ -596,7 +602,7 @@
       if(ch.length !== 1 || !/[а-яё]/i.test(ch)) return;
       secretBuffer = (secretBuffer + ch).slice(-Math.max(...secretRoutes.map(route => route.word.length)));
       const matched = secretRoutes.find(route => secretBuffer.endsWith(route.word));
-      if(matched) goToSecret(matched.url);
+      if(matched) goToSecret(matched.url, matched.word);
     });
 
     // Mobile entrance: hold the homepage title, then enter the same keyword.
@@ -649,7 +655,7 @@
         e.preventDefault();
         const key = secretInput.value.trim().toLocaleLowerCase('ru-RU').replace(/[\s\u200b]+/g, '');
         if(key === 'осознание'){
-          goToSecret('secret2.html');
+          goToSecret('secret2.html', 'осознание');
         }else{
           if(secretMessage) secretMessage.textContent = 'Это слово ничего не открыло.';
           secretInput.select();
