@@ -36,7 +36,7 @@
       { name: 'PBKDF2', salt, iterations: VAULT.kdf.iterations, hash: VAULT.kdf.hash },
       base,
       { name: 'AES-GCM', length: 256 },
-      true,            
+      true,            // нужен export → чтобы не спрашивать пароль при обновлении страницы
       ['encrypt', 'decrypt']
     );
   }
@@ -102,7 +102,9 @@
       try {
         const raw = await crypto.subtle.exportKey('raw', key);
         sessionStorage.setItem(SESSION_KEY, bytesToB64(new Uint8Array(raw)));
-      } catch (e) { 
+      } catch (e) {
+        /* приватный режим — просто спросим пароль снова после перезагрузки */
+      }
       render(html);
     } catch (e) {
       fail('Не удалось проверить пароль. Попробуйте ещё раз.');
@@ -129,7 +131,7 @@
       const key = await crypto.subtle.importKey('raw', b64ToBytes(saved), 'AES-GCM', true, ['decrypt']);
       const html = await openWith(key);
       if (html) { render(html); return; }
-    } catch (e) { 
+    } catch (e) { /* ключ устарел после обновления текста */ }
     sessionStorage.removeItem(SESSION_KEY);
   })();
 

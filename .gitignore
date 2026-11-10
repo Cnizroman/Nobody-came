@@ -1,0 +1,6 @@
+# Исходники с открытым текстом книг — не публиковать.
+# Из них собираются зашифрованные book3-vault.js / secret-vault.js
+# (node tools/book3-lock.mjs и node tools/secret-lock.mjs).
+book3-source.html
+secret-source.html
+secret2-source.html
