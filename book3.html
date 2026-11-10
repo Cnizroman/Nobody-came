@@ -1,95 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Где нас нет · Трилогия</title>
-    <link rel="stylesheet" href="style.css" />
-    <style>
-        /* Финальное оформление окна пароля третьей книги */
-        .password-box .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-        }
-        .password-mark {
-            width: 54px;
-            height: 54px;
-            margin: 0 auto 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(var(--accent-rgb), .45);
-            color: var(--accent);
-            font-family: 'Playfair Display', serif;
-            font-size: 19px;
-            letter-spacing: 4px;
-            box-shadow: 0 0 25px rgba(var(--accent-rgb), .08), inset 0 0 20px rgba(var(--accent-rgb), .04);
-            opacity: .9;
-        }
-        .password-box .sub {
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    
-        /* Финальное голосовое сообщение */
-        .final-voice { margin:28px auto 34px; max-width:680px; padding:18px 20px 16px; border:1px solid rgba(166,123,196,.18); border-radius:18px; background:linear-gradient(135deg,rgba(22,18,27,.88),rgba(10,9,13,.94)); box-shadow:0 18px 45px rgba(0,0,0,.28),inset 0 0 30px rgba(166,123,196,.025); }
-        .final-voice-head { display:flex; align-items:center; gap:12px; margin-bottom:15px; }
-        .final-voice-icon { width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(166,123,196,.34);color:#a67bc4;font-size:11px;box-shadow:0 0 18px rgba(166,123,196,.08); }
-        .final-voice-title { color:#cfc7d7;font:15px/1.2 'Playfair Display',serif;letter-spacing:.03em; }
-        .final-voice-meta { margin-top:3px;color:#625b69;font:11px/1.3 'EB Garamond',serif;letter-spacing:.04em; }
-        .final-voice-player { display:flex;align-items:center;gap:13px; }
-        .final-voice-play { flex:0 0 38px;width:38px;height:38px;border-radius:50%;padding:0;border:1px solid rgba(166,123,196,.34);background:rgba(166,123,196,.08);color:#b694d0;font-size:13px;cursor:pointer;transition:.25s ease; }
-        .final-voice-play:hover { background:rgba(166,123,196,.15);box-shadow:0 0 20px rgba(166,123,196,.12);transform:scale(1.04); }
-        .final-voice-track-wrap { flex:1;min-width:0; }
-        .final-voice-wave { height:31px;display:flex;align-items:center;gap:3px;cursor:pointer; }
-        .final-voice-wave i { display:block;flex:1;max-width:4px;min-width:2px;height:var(--h,13px);border-radius:3px;background:rgba(166,123,196,.34);transition:background .15s ease; }
-        .final-voice-wave i:nth-child(3n){--h:21px}.final-voice-wave i:nth-child(4n){--h:10px}.final-voice-wave i:nth-child(5n){--h:25px}.final-voice-wave i:nth-child(7n){--h:17px}.final-voice-wave i:nth-child(8n){--h:8px}.final-voice-wave i:nth-child(11n){--h:22px}.final-voice-wave i:nth-child(13n){--h:14px}.final-voice-wave i:nth-child(17n){--h:27px}.final-voice-wave i:nth-child(19n){--h:11px}
-        .final-voice-wave i.active { background:#a67bc4; }
-        .final-voice-time { display:flex;justify-content:space-between;color:#55505b;font:11px/1 'EB Garamond',serif;margin-top:2px; }
-        .final-voice-audio { display:none; }
-        .final-voice-status { margin-top:11px;color:#514a58;font:italic 12px/1.4 'EB Garamond',serif; }
-        .message-unfinished { max-height:0;overflow:hidden;opacity:0;margin:0 auto;text-align:center;color:#6c6274;font:italic 14px/1.5 'EB Garamond',serif;letter-spacing:.03em;transition:max-height 1.2s ease,opacity 1.2s ease,margin .9s ease; }
-        .message-unfinished.visible { max-height:80px;opacity:1;margin:24px auto 40px; }
-        @media(max-width:600px){.final-voice{padding:16px 15px;border-radius:15px}.final-voice-title{font-size:14px}.final-voice-wave{gap:2px}.final-voice-wave i{max-width:3px}.final-voice-status{font-size:11px}}
-        /* До верного пароля текста в документе нет вообще: блок пуст и скрыт */
-        #book-content { display: none; }
-        #book-content.unlocked { display: block; }
-        body.book3-unlocked .password-overlay { display: none !important; }
-</style>
-<body class="theme-book3">
-    <div class="side-left"><span class="side-title">Где нас нет</span></div>
-    <div class="side-right"><span class="side-title">Книга третья</span></div>
-
-    <div class="password-overlay" id="passwordOverlay">
-        <div class="password-box" id="passwordBox">
-            <button class="close-btn" id="closePasswordBtn" aria-label="Закрыть">✕</button>
-            <div class="password-mark" aria-hidden="true">III</div>
-            <h2>Где нас нет</h2>
-            <p class="sub">Введите слово, чтобы открыть третью книгу</p>
-            <input type="password" id="passwordInput" placeholder="Введите пароль" autocomplete="off" autofocus aria-label="Пароль" />
-            <div class="error" id="errorMsg" role="status" aria-live="polite"></div>
-            <button id="unlockBtn" type="button">Открыть</button>
-        </div>
-    </div>
-
-    <div class="stars-container" id="starsContainer"></div>
-
-    <!-- Текст книги подставляется сюда только после пароля: CAPFIAX.
-         В самом файле book3.html строк книги нет. -->
-    <div id="book-content" aria-live="polite"></div>
-
-    <noscript>
-        <div class="password-overlay">
-            <div class="password-box">
-                <h2>Где нас нет</h2>
-                <p class="sub">Для доступа к книге нужен включённый JavaScript: текст хранится в зашифрованном виде и расшифровывается в браузере.</p>
-            </div>
-        </div>
-    </noscript>
-
-    <script src="book3-vault.js"></script>
-    <script src="book3-gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noarchive,nosnippet">
+<title>Где нас нет · Никто не вспомнит</title>
+<meta name="description" content="Где нас нет — закрытая история цикла «Никто не вспомнит». Доступ по паролю автора.">
+<style>html,body{margin:0;min-height:100%;background:#08090d;color:#ddd}header{padding:12px 18px;font:15px sans-serif}a{color:#d9c4ee}iframe{display:block;width:100%;height:calc(100vh - 50px);min-height:600px;border:0}</style>
+</head>
+<body>
+<header><a href="index.html">← Старый сайт</a></header>
+<iframe title="Где нас нет — защищённая книга" src="https://cnizroman.github.io/Ink/book3.html"></iframe>
+<noscript>Для чтения потребуется JavaScript и соединение с интернетом.</noscript>
 </body>
 </html>
